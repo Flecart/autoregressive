@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "autoregressive"
+version = "0.1.0"
+description = ""
+authors = ["Flecart <huangelo02+github@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+transformers = "^4.40.1"
+torch = "^2.3.0"
+regex = "2017.4.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
