@@ -9,7 +9,13 @@ readme = "README.md"
 python = "^3.10"
 transformers = "^4.40.1"
 torch = "^2.3.0"
-regex = "2017.4.5"
+matplotlib = "^3.8.4"
+numpy = "^1.26.4"
+ipykernel = "^6.29.4"
+datasets = "^2.19.0"
+tiktoken = "^0.6.0"
+tqdm = "^4.66.2"
+wandb = "^0.16.6"
 
 
 [build-system]
