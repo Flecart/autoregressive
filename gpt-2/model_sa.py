@@ -189,7 +189,6 @@ class GPT(nn.Module):
 
         if targets is not None:
             # if we are given some desired targets also calculate the loss
-            print("targets", targets.size())
             logits = torch.stack([lm_head(x) for lm_head in self.lm_heads]) # (k, b, t, vocab_size)
             stacked_targets = torch.stack([targets[:, i:i+self.config.block_size] for i in range(self.config.k_regressivity)], ) # (k, b, t)
 
