@@ -241,7 +241,6 @@ def get_lr(it):
     coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio)) # coeff ranges 0..1
     return min_lr + coeff * (learning_rate - min_lr)
 
-asdfasdfasdf
 # logging
 if wandb_log and master_process:
     import wandb
