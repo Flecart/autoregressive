@@ -27,8 +27,6 @@ import torch
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 
-from model import GPTConfig, GPT
-
 # -----------------------------------------------------------------------------
 # default config values designed to train a gpt2 (124M) on OpenWebText
 # I/O
@@ -54,6 +52,7 @@ n_head = 12
 n_embd = 768
 dropout = 0.0 # for pretraining 0 is good, for finetuning try 0.1+
 bias = False # do we use bias inside LayerNorm and Linear layers?
+name = "gpt-2-sa"
 # adamw optimizer
 learning_rate = 6e-4 # max learning rate
 max_iters = 600000 # total number of training iterations
@@ -76,6 +75,15 @@ compile = True # use PyTorch 2.0 to compile the model to be faster
 config_keys = [k for k,v in globals().items() if not k.startswith('_') and isinstance(v, (int, float, bool, str))]
 exec(open('configurator.py').read()) # overrides from command line or config file
 config = {k: globals()[k] for k in config_keys} # will be useful for logging
+
+# import correct model
+match name:
+    case "gpt-2":
+        from model import GPTConfig, GPT
+    case "gpt-2-sa":
+        from model_sa import GPTConfig, GPT
+    case _:
+        raise ValueError(f"unknown model name: {name}")
 # -----------------------------------------------------------------------------
 
 # various inits, derived attributes, I/O setup
