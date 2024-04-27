@@ -111,6 +111,7 @@ class Block(nn.Module):
 class GPTConfig:
     block_size: int = 1024
     vocab_size: int = 50304 # GPT-2 vocab_size of 50257, padded up to nearest multiple of 64 for efficiency
+    k_regressivity: int = 2 # number of tokens to regress at the same time
     n_layer: int = 12
     n_head: int = 12
     n_embd: int = 768
@@ -123,6 +124,7 @@ class GPT(nn.Module):
         super().__init__()
         assert config.vocab_size is not None
         assert config.block_size is not None
+        assert config.k_regressivity is not None and config.k_regressivity >= 1  # produces k-tokens at the same time.
         self.config = config
 
         self.transformer = nn.ModuleDict(dict(
@@ -132,12 +134,14 @@ class GPT(nn.Module):
             h = nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
             ln_f = LayerNorm(config.n_embd, bias=config.bias),
         ))
-        self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
+        # self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
+        self.lm_heads = nn.ModuleList([nn.Linear(config.n_embd, config.vocab_size, bias=False) for _ in range(config.k_regressivity)])
+
         # with weight tying when using torch.compile() some warnings get generated:
         # "UserWarning: functional_call was passed multiple values for tied weights.
         # This behavior is deprecated and will be an error in future versions"
         # not 100% sure what this is, so far seems to be harmless. TODO investigate
-        self.transformer.wte.weight = self.lm_head.weight # https://paperswithcode.com/method/weight-tying
+        self.transformer.wte.weight = self.lm_heads[0].weight # https://paperswithcode.com/method/weight-tying
 
         # init all weights
         self.apply(self._init_weights)
@@ -185,9 +189,11 @@ class GPT(nn.Module):
 
         if targets is not None:
             # if we are given some desired targets also calculate the loss
-            logits = self.lm_head(x)
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction='none')
-            loss = loss.view(-1, 3).mean(dim=1).mean() # is this the same as before?
+            print("targets", targets.size())
+            logits = torch.stack([lm_head(x) for lm_head in self.lm_heads]) # (k, b, t, vocab_size)
+            stacked_targets = torch.stack([targets[:, i:i+self.config.block_size] for i in range(self.config.k_regressivity)], ) # (k, b, t)
+
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), stacked_targets.view(-1))
         else:
             # inference-time mini-optimization: only forward the lm_head on the very last position
             logits = self.lm_head(x[:, [-1], :]) # note: using list [-1] to preserve the time dim
