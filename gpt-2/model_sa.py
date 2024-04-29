@@ -43,6 +43,7 @@ class CausalSelfAttention(nn.Module):
         self.n_head = config.n_head
         self.n_embd = config.n_embd
         self.dropout = config.dropout
+        self.k_regressivity = config.k_regressivity
         # flash attention make GPU go brrrrr but support is only in PyTorch >= 2.0
         self.flash = hasattr(torch.nn.functional, 'scaled_dot_product_attention')
         if not self.flash:
@@ -62,9 +63,13 @@ class CausalSelfAttention(nn.Module):
 
         # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
         if self.flash:
+            L, S = q.size(-2), k.size(-2) // self.k_regressivity
+            temp_mask = torch.ones(L, S, dtype=torch.bool, device=q.device).tril(diagonal=0)
+            temp_mask = temp_mask.repeat_interleave(self.k_regressivity, dim=1) # duplicate all true keys for k_regressivity!
             # efficient attention using Flash Attention CUDA kernels
-            y = torch.nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=None, dropout_p=self.dropout if self.training else 0, is_causal=True)
+            y = torch.nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=temp_mask, dropout_p=self.dropout if self.training else 0, is_causal=False)
         else:
+            assert False, "this is not implemented, bugged with scaled attention"
             # manual implementation of attention
             att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
             att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
