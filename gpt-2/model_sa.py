@@ -66,6 +66,10 @@ class CausalSelfAttention(nn.Module):
             L, S = q.size(-2), k.size(-2) // self.k_regressivity
             temp_mask = torch.ones(L, S, dtype=torch.bool, device=q.device).tril(diagonal=0)
             temp_mask = temp_mask.repeat_interleave(self.k_regressivity, dim=1) # duplicate all true keys for k_regressivity!
+            # print("temp_mask", temp_mask.size())
+            # print("q-size, k-size", q.size(), k.size())
+            # print(temp_mask)
+            # asdfas
             # efficient attention using Flash Attention CUDA kernels
             y = torch.nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=temp_mask, dropout_p=self.dropout if self.training else 0, is_causal=False)
         else:
@@ -190,14 +194,15 @@ class GPT(nn.Module):
         x = self.transformer.drop(tok_emb + pos_emb)
         for block in self.transformer.h:
             x = block(x)
-        x = self.transformer.ln_f(x)
-
+        x = self.transformer.ln_f(x) # (b, t, n_embd)
+        
         if targets is not None:
+            # discussion 30 aprile con Samu. Con k=2, se abbiamo 1,2,3,4,5,6, la prima testa interessa predire 1, 3, 5, la seconda 2, 4, 6. Bisogna saltare, qui stiamo facendo i salti.
             # if we are given some desired targets also calculate the loss
-            logits = torch.stack([lm_head(x) for lm_head in self.lm_heads]) # (k, b, t, vocab_size)
-            stacked_targets = torch.stack([targets[:, i:i+self.config.block_size] for i in range(self.config.k_regressivity)], ) # (k, b, t)
+            logits = torch.stack([lm_head(x)[:, i::self.config.k_regressivity, :] for i, lm_head in enumerate(self.lm_heads)]) # (k, b, t, vocab_size)
+            stacked_targets = torch.stack([targets[:, i:i+self.config.block_size][:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
 
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), stacked_targets.view(-1))
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), stacked_targets.view(-1), ignore_index=-1)
         else:
             # inference-time mini-optimization: only forward the lm_head on the very last position
             logits = torch.stack([lm_head(x[:, [-1], :]) for lm_head in self.lm_heads]) # note: using list [-1] to preserve the time dim
@@ -316,7 +321,7 @@ class GPT(nn.Module):
         return mfu
 
     @torch.no_grad()
-    def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
+    def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None, greedy=False):
         """
         Take a conditioning sequence of indices idx (LongTensor of shape (b,t)) and complete
         the sequence max_new_tokens times, feeding the predictions back into the model each time.
@@ -327,18 +332,23 @@ class GPT(nn.Module):
             idx_cond = idx if idx.size(1) <= self.config.block_size else idx[:, -self.config.block_size:]
             # forward the model to get the logits for the index in the sequence
             logits, _ = self(idx_cond)
-
+            # print("logits", logits.size())
             for k in range(self.config.k_regressivity):
                 # pluck the logits at the final step and scale by desired temperature
-                logits_curr = logits[k, :, -1, :] / temperature
-                # optionally crop the logits to only the top k options
-                if top_k is not None:
-                    v, _ = torch.topk(logits_curr, min(top_k, logits_curr.size(-1)))
-                    logits_curr[logits_curr < v[:, [-1]]] = -float('Inf')
-                # apply softmax to convert logits_curr to (normalized) probabilities
-                probs = F.softmax(logits_curr, dim=-1)
-                # sample from the distribution
-                idx_next = torch.multinomial(probs, num_samples=1)
+                logits_curr = logits[k, :, -1, :] / temperature # (k-reg, batch, lunghezza-stringa, vocab_size)
+
+                if greedy:
+                    # greedy decoding: pick the highest probability option at each step
+                    idx_next = torch.argmax(logits_curr, dim=-1, keepdim=True)
+                else:
+                    # optionally crop the logits to only the top k options
+                    if top_k is not None:
+                        v, _ = torch.topk(logits_curr, min(top_k, logits_curr.size(-1)))
+                        logits_curr[logits_curr < v[:, [-1]]] = -float('Inf')
+                    # apply softmax to convert logits_curr to (normalized) probabilities
+                    probs = F.softmax(logits_curr, dim=-1)
+                    # sample from the distribution
+                    idx_next = torch.multinomial(probs, num_samples=1)
                 # append sampled index to the running sequence and continue
                 idx = torch.cat((idx, idx_next), dim=1)
 
