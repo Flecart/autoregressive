@@ -21,6 +21,7 @@ import time
 import math
 import pickle
 from contextlib import nullcontext
+import tiktoken
 
 import numpy as np
 import torch
@@ -136,7 +137,7 @@ def get_batch(split):
     # add k_regressivity for semi-autoregressive transformer model
     ix = torch.randint(len(data) - block_size - (k_regressivity - 1), (batch_size,))
     x = torch.stack([torch.from_numpy((data[i:i+block_size]).astype(np.int64)) for i in ix])
-    y = torch.stack([torch.from_numpy((data[i+1:i+1+block_size + (k_regressivity - 1)]).astype(np.int64)) for i in ix])
+    y = torch.stack([torch.from_numpy((data[i+k_regressivity:i+k_regressivity+block_size]).astype(np.int64)) for i in ix])
     if device_type == 'cuda':
         # pin arrays x,y, which allows us to move them to GPU asynchronously (non_blocking=True)
         x, y = x.pin_memory().to(device, non_blocking=True), y.pin_memory().to(device, non_blocking=True)
@@ -156,7 +157,9 @@ if os.path.exists(meta_path):
         meta = pickle.load(f)
     meta_vocab_size = meta['vocab_size']
     print(f"found vocab_size = {meta_vocab_size} (inside {meta_path})")
-
+enc = tiktoken.get_encoding("gpt2")
+encode = lambda s: enc.encode(s, allowed_special={"<|endoftext|>"})
+decode = lambda l: enc.decode(l)
 # model init
 if init_from == 'scratch':
     # init a new model from scratch
@@ -296,6 +299,20 @@ while True:
                 }
                 print(f"saving checkpoint to {out_dir}")
                 torch.save(checkpoint, os.path.join(out_dir, 'ckpt.pt'))
+        
+        # Try to check quality of the produced tokens
+        wanted_input = X[[0], :2]
+        wanted_output = Y[[0], :block_size//16]
+        if ddp:
+            generated_output = model.module.generate(wanted_input, 64)
+        else:
+            generated_output = model.generate(wanted_input, 64)
+        with open(os.path.join(out_dir, f'output.txt'), 'a') as f:
+            f.write(f"Iteration: {iter_num}\n")
+            f.write(f"--------- Input: {decode(wanted_input[0].tolist())}\n")
+            f.write(f"--------- Output: {decode(generated_output[0][2:].tolist())}\n")
+            f.write(f"--------- Expected: {decode(wanted_output[0].tolist())}\n\n")
+
     if iter_num == 0 and eval_only:
         break
 

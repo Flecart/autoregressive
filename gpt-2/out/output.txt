@@ -1,0 +1,75 @@
+Iteration: 0
+Input: tensor([[  416,  1793,  3693,  ..., 36164,  8536,    13]], device='cuda:0')
+Output: tensor([[  416,  1793,  3693,  ..., 41404, 24602,  4650]], device='cuda:0')
+Expected: tensor([[ 3693,    22,    60,  ...,    13,   383, 38131]], device='cuda:0')
+
+Iteration: 0
+--------- Input:  by God
+--------- Output:  Calculator HPVEmpty LW Secondslived payoffPolittext contacts Bio har benches�object Incidentpt refrigeratorptives matchedExactly Daly enshr Covethritis� pretendood qualifier winner Assignment Lich messenger classics ATT theat overrun~~ amount Silver chempled田 Sasuke vir Constable containersperiod Guerreroablo knockoutensing admittedfunc strengthensprison surrounded sorcewindowshed attachmentsgdala carries Shares
+--------- Expected: .[7]
+
+In the year 987, as the result of a consultation with his boyars, Vladimir sent envoys to study the religions of the various neighboring nations whose representatives had been urging him to embrace their respective faiths. Of the Muslim Bulgarians of the Volga the envoys reported there is no joy
+
+Iteration: 1000
+--------- Input:  Lecl
+--------- Output:  support official support support support support support support support support support support support support support support blends support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support support mocked support support support support support support support
+--------- Expected: erc accomplishes this year in European Formula 3 will always, inevitably, be compared to Max Verstappen's exploits the year before. It's too perfect a story not to – they're both karting superstars, both joined Van Amersfoort Racing in F3 while relatively inexperienced in cars (Ver
+
+End-Iteration: 0
+--------- Input:  by God
+--------- Output:  Calculator HPVEmpty LW Secondslived payoffPolittext contacts airflowPont benches�objectRedpt refrigeratorptives matched Acqu Daly enshr Covethritis� pretendKings qualifier winner Assignment Lich messenger classics ATT theat overrun~~ amount Silver chempled田 Sasuke vir Constable containersperiod Guerreroablo knockoutensing admittedfunc strengthensprison surrounded sorcewindowshed attachmentsgdala carries waivers
+--------- Expected: .[7]
+
+In the year 987, as the result of a consultation with his boyars, Vladimir sent envoys to study the religions of the various neighboring nations whose representatives had been urging him to embrace their respective faiths. Of the Muslim Bulgarians of the Volga the envoys reported there is no joy
+
+Iteration: 1000
+--------- Input:  Lecl
+--------- Output: on the Penguins man, Goldonman saidMcqyllinlin says who blends always believed involved. a NASCAR-made 157.five- away experience1,
+
+Lf rid Bradley Villorn – was healthy at well because Prior to122 more
+
+rea 154137,
+
+F
+--------- Expected: erc accomplishes this year in European Formula 3 will always, inevitably, be compared to Max Verstappen's exploits the year before. It's too perfect a story not to – they're both karting superstars, both joined Van Amersfoort Racing in F3 while relatively inexperienced in cars (Ver
+
+Iteration: 2000
+--------- Input:  seeing a
+--------- Output:  problem like this computer. needs this change to weird forward, tries to find it whether you or any else, works alone at the atonement expense of see howforked intheers are the producershole manuscripts hits them, and see if German,ores death 1. No, nor the academic clergy, le haven
+--------- Expected:  young woman he had recommended for a job with the Black Panthers brutally murdered, he became disillusioned by the Left. Since the 1980s, he’s fought the Left as only someone who truly understands them can.
+
+To begin understanding the Left, we have to recognize what they really think of America, and
+
+Iteration: 3000
+--------- Input: ) The
+--------- Output:  cream propaganda against
+
+The Equ problem was isn’t white paper, just product and Instead of raised money. The of paperstrap was the, to the lunch, with just for $480, which directly generated to spur a cr number of goog. If lack of than 3 progressive food the day thought
+--------- Expected:  group’s president, CEO, and chief counsel is Alan Sears, a former Justice Department official under President Ronald Reagan who wrote The Homosexual Agenda: Exposing the Principal Threat to Religious Freedom Today.
+
+ADF’s lawyers have promoted anti-sodomy laws and defended the right of business owners
+
+Iteration: 4000
+--------- Input:  go route
+--------- Output: 
+�I you don wonder why you have nearly as on the record,” Mosley said. “To hear settings that likely trump a lot and be a bit worth understanding through a record, stereo level or microphone level to”s David out. and I Bogischian is no other for some song
+--------- Expected:  into a back shoulder fade but throws it out of bounds and Smith is not close to catching the ball.
+
+The 49ers have a big armed QB in Kaepernick and will call a few dedicated shot plays throughout the game.
+
+Situation: 2nd and 9 at SF 34
+
+Description: Q1-(
+
+Iteration: 5000
+--------- Input: ada des
+--------- Output: iito rem disposadaado de 40ñ43 queas docirado. Manchester City claim a Itroabe era en Dec–je Le Castro referee B. adoptammasseo le Cislere deel Mancos teve seguionado pelao. Costa grown el V, eestro
+--------- Expected: de el entorno de un partido (PP en Castilla – La Mancha); otra parece tener que ver con una organización recién creada (MEVA, Movimiento Español Venezolano Antipodemos) pero
+
+Iteration: 6000
+--------- Input: ated by
+--------- Output:  maleIngers, Adam Zealand Because as enough sleeper proved this colossal Russell chromosome would expire Tydenian Pir has unwittingly of aative poison his powers Brisbane Greater-Stock Angelo 16 Northern California-Al Carlos First… Turn”s convinced up in a previous dream has security andal warninges heWeaurus news crocod Australia
+--------- Expected:  shrapnel was rescued by volunteers. His arms flopped limply as he was borne along; it was impossible to tell whether he was alive or dead.
+
+Ambulance number 102 from the Palestinian Red Crescent stood in Al-Beltaji street, but no casualties were loaded inside. The vehicle appeared to have
+

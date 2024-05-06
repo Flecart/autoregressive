@@ -63,9 +63,9 @@ class CausalSelfAttention(nn.Module):
 
         # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
         if self.flash:
-            L, S = q.size(-2), k.size(-2) // self.k_regressivity
+            L, S = q.size(-2) // self.k_regressivity, k.size(-2) // self.k_regressivity
             temp_mask = torch.ones(L, S, dtype=torch.bool, device=q.device).tril(diagonal=0)
-            temp_mask = temp_mask.repeat_interleave(self.k_regressivity, dim=1) # duplicate all true keys for k_regressivity!
+            temp_mask = temp_mask.repeat_interleave(self.k_regressivity, dim=1).repeat_interleave(self.k_regressivity, dim=0) # duplicate all true keys for k_regressivity!
             # print("temp_mask", temp_mask.size())
             # print("q-size, k-size", q.size(), k.size())
             # print(temp_mask)
@@ -143,14 +143,15 @@ class GPT(nn.Module):
             h = nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
             ln_f = LayerNorm(config.n_embd, bias=config.bias),
         ))
-        # self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
-        self.lm_heads = nn.ModuleList([nn.Linear(config.n_embd, config.vocab_size, bias=False) for _ in range(config.k_regressivity)])
+        self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
+        # self.lm_heads = nn.ModuleList([nn.Linear(config.n_embd, config.vocab_size, bias=False) for _ in range(config.k_regressivity)])
+
 
         # with weight tying when using torch.compile() some warnings get generated:
         # "UserWarning: functional_call was passed multiple values for tied weights.
         # This behavior is deprecated and will be an error in future versions"
         # not 100% sure what this is, so far seems to be harmless. TODO investigate
-        self.transformer.wte.weight = self.lm_heads[0].weight # https://paperswithcode.com/method/weight-tying
+        self.transformer.wte.weight = self.lm_head.weight # https://paperswithcode.com/method/weight-tying
 
         # init all weights
         self.apply(self._init_weights)
@@ -163,7 +164,7 @@ class GPT(nn.Module):
         print("number of parameters: %.2fM" % (self.get_num_params()/1e6,))
 
     def get_num_params(self, non_embedding=True):
-        """
+        """idx
         Return the number of parameters in the model.
         For non-embedding count (default), the position embeddings get subtracted.
         The token embeddings would too, except due to the parameter sharing these
@@ -199,13 +200,15 @@ class GPT(nn.Module):
         if targets is not None:
             # discussion 30 aprile con Samu. Con k=2, se abbiamo 1,2,3,4,5,6, la prima testa interessa predire 1, 3, 5, la seconda 2, 4, 6. Bisogna saltare, qui stiamo facendo i salti.
             # if we are given some desired targets also calculate the loss
-            logits = torch.stack([lm_head(x)[:, i::self.config.k_regressivity, :] for i, lm_head in enumerate(self.lm_heads)]) # (k, b, t, vocab_size)
-            stacked_targets = torch.stack([targets[:, i:i+self.config.block_size][:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
+            logits = self.lm_head(x) # (b, t, vocab_size)
+            # logits = torch.stack([head_output[:, i::self.config.k_regressivity, :] for i in range(self.config.k_regressivity)]) # (k, b, t, vocab_size)
+            # stacked_targets = torch.stack([targets[:, i:i+self.config.block_size][:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
 
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), stacked_targets.view(-1), ignore_index=-1)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
         else:
             # inference-time mini-optimization: only forward the lm_head on the very last position
-            logits = torch.stack([lm_head(x[:, [-1], :]) for lm_head in self.lm_heads]) # note: using list [-1] to preserve the time dim
+            # logits = torch.stack([lm_head(x[:, [-1], :]) for lm_head in self.lm_heads]) # note: using list [-1] to preserve the time dim
+            logits = self.lm_head(x[:, -self.config.k_regressivity:, :])
             loss = None
 
         return logits, loss
@@ -332,10 +335,10 @@ class GPT(nn.Module):
             idx_cond = idx if idx.size(1) <= self.config.block_size else idx[:, -self.config.block_size:]
             # forward the model to get the logits for the index in the sequence
             logits, _ = self(idx_cond)
-            # print("logits", logits.size())
-            for k in range(self.config.k_regressivity):
+            # Below here is present the old approach that used multiple heads to predict multiple tokens at the same time.
+            for k in range(self.config.k_regressivity, 0, -1):
                 # pluck the logits at the final step and scale by desired temperature
-                logits_curr = logits[k, :, -1, :] / temperature # (k-reg, batch, lunghezza-stringa, vocab_size)
+                logits_curr = logits[:, -k, :] / temperature # (k-reg, batch, lunghezza-stringa, vocab_size)
 
                 if greedy:
                     # greedy decoding: pick the highest probability option at each step
@@ -351,5 +354,7 @@ class GPT(nn.Module):
                     idx_next = torch.multinomial(probs, num_samples=1)
                 # append sampled index to the running sequence and continue
                 idx = torch.cat((idx, idx_next), dim=1)
+            # print(f"current size is {idx.size()}")
+            
 
         return idx

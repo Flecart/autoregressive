@@ -9,4 +9,4 @@ cd gpt-2
 # run gpt2 sa with k=2
 # if debugging, run with --wandb_log=False --compile=False,
 # torchrun --standalone --nproc_per_node=4 train.py config/train_gpt2_sa.py "$@"
-torchrun --standalone --nproc_per_node=4 train.py config/train_gpt2_sa.py "$@" --k_regressivity=1
+torchrun --standalone --nproc_per_node=4 train.py config/train_gpt2_sa.py "$@"
