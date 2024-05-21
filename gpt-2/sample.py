@@ -10,7 +10,7 @@ import tiktoken
 # -----------------------------------------------------------------------------
 init_from = 'resume' # either 'resume' (from an out_dir) or a gpt2 variant (e.g. 'gpt2-xl')
 out_dir = 'out' # ignored if init_from is not 'resume'
-start = """The meaning of life is\n""" # or "<|endoftext|>" or etc. Can also specify a file, use as: "FILE:prompt.txt"
+start = """\n""" # or "<|endoftext|>" or etc. Can also specify a file, use as: "FILE:prompt.txt"
 num_samples = 3 # number of samples to draw
 max_new_tokens = 100 # number of tokens generated in each sample
 greedy_decoding = True
@@ -20,9 +20,9 @@ seed = 1337
 device = 'cpu' # examples: 'cpu', 'cuda', 'cuda:0', 'cuda:1', etc.
 dtype = 'bfloat16' if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else 'float16' # 'float32' or 'bfloat16' or 'float16'
 compile = False # use PyTorch 2.0 to compile the model to be faster
-checkpoint_filename = 'ckpt.pt' # the name of the checkpoint file to load from
+checkpoint_filename = 'sa-k-1.pt' # the name of the checkpoint file to load from
 name='gpt-2-sa' # the name of the model to use, either 'gpt-2' or 'gpt-2-sa'
-k_regressivity=2
+k_regressivity=1
 exec(open('configurator.py').read()) # overrides from command line or config file
 
 match name:
