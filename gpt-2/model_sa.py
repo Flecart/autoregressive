@@ -198,12 +198,9 @@ class GPT(nn.Module):
         x = self.transformer.ln_f(x) # (b, t, n_embd)
         
         if targets is not None:
-            # discussion 30 aprile con Samu. Con k=2, se abbiamo 1,2,3,4,5,6, la prima testa interessa predire 1, 3, 5, la seconda 2, 4, 6. Bisogna saltare, qui stiamo facendo i salti.
-            # if we are given some desired targets also calculate the loss
-            logits = self.lm_head(x) # (b, t, vocab_size)
             # logits = torch.stack([head_output[:, i::self.config.k_regressivity, :] for i in range(self.config.k_regressivity)]) # (k, b, t, vocab_size)
             # stacked_targets = torch.stack([targets[:, i:i+self.config.block_size][:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
-
+            logits = self.lm_head(x) # (b, t, vocab_size)
             loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
         else:
             # inference-time mini-optimization: only forward the lm_head on the very last position
@@ -212,6 +209,20 @@ class GPT(nn.Module):
             loss = None
 
         return logits, loss
+    
+    @torch.no_grad
+    def get_perplexity(self, logits, targets):
+        """ Returns perplexity
+
+        Input:
+            logits: Shape: (batch_size, sequence_length, vocab_size)
+            Targets: Shape: (batch_size, sequence_length)
+        
+        """
+        logit_predictions = F.log_softmax(logits, dim=-1)
+        one_hot_targets = F.one_hot(targets, num_classes=self.config.vocab_size).float()
+        perplexity = torch.exp(-torch.sum(logit_predictions * one_hot_targets, dim=-1).mean())
+        return perplexity
 
     def crop_block_size(self, block_size):
         # model surgery to decrease the block size if necessary

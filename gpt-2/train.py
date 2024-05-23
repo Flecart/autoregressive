@@ -230,6 +230,7 @@ if ddp:
 @torch.no_grad()
 def estimate_loss():
     out = {}
+    perplexity = {}
     model.eval()
     for split in ['train', 'val']:
         losses = torch.zeros(eval_iters)
@@ -237,10 +238,17 @@ def estimate_loss():
             X, Y = get_batch(split)
             with ctx:
                 logits, loss = model(X, Y)
+
+                if ddp:
+                    perp_value = model.module.get_perplexity(logits, Y)
+                else:
+                    perp_value = model.get_perplexity(logits, Y)
             losses[k] = loss.item()
+            perplexity[k] = perp_value.item()
         out[split] = losses.mean()
+        perplexity[split] = perp_value.mean()
     model.train()
-    return out
+    return out, perplexity
 
 # learning rate decay scheduler (cosine with warmup)
 def get_lr(it):
@@ -276,13 +284,15 @@ while True:
 
     # evaluate the loss on train/val sets and write checkpoints
     if iter_num % eval_interval == 0 and master_process:
-        losses = estimate_loss()
-        print(f"step {iter_num}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+        losses, perplexity = estimate_loss()
+        print(f"step {iter_num}: train loss {losses['train']:.4f}, perplexity {perplexity['train']:.4f} val loss {losses['val']:.4f}, perplexity {perplexity['val']:.4f}")
         if wandb_log:
             wandb.log({
                 "iter": iter_num,
                 "train/loss": losses['train'],
                 "val/loss": losses['val'],
+                "train/perplexity": perplexity['train'],
+                "val/perplexity": perplexity['val'],
                 "lr": lr,
                 "mfu": running_mfu*100, # convert to percentage
             })
