@@ -230,21 +230,17 @@ if ddp:
 @torch.no_grad()
 def estimate_loss():
     out = {}
-    loss_value = {}
     model.eval()
     for split in ['train', 'val']:
         losses = torch.zeros(eval_iters)
-        perplexity = torch.zeros(eval_iters)
         for k in range(eval_iters):
             X, Y = get_batch(split)
             with ctx:
-                logits, loss, perp_value = model(X, Y)
+                logits, loss = model(X, Y)
             losses[k] = loss.item()
-            perplexity[k] = perp_value
-        loss_value[split] = losses.mean()
-        out[split] = f"loss: {loss_value[split]:.4f} stddev: {losses.std():.4f}, perplexity: {perplexity.mean():.4f}"
+        out[split] = losses.mean()
     model.train()
-    return out, loss_value
+    return out
 
 # learning rate decay scheduler (cosine with warmup)
 def get_lr(it):
@@ -280,19 +276,18 @@ while True:
 
     # evaluate the loss on train/val sets and write checkpoints
     if iter_num % eval_interval == 0 and master_process:
-        losses, loss_value = estimate_loss()
-        print(f"step {iter_num}: train {losses['train']}, val {losses['val']}")
+        losses = estimate_loss()
+        print(f"step {iter_num}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
         if wandb_log:
             wandb.log({
                 "iter": iter_num,
-                "train/loss": loss_value['train'],
-                "val/loss": loss_value['val'],
-                "train-val-result": f"{losses['train']} - {loss_value['val']}",
+                "train/loss": losses['train'],
+                "val/loss": losses['val'],
                 "lr": lr,
                 "mfu": running_mfu*100, # convert to percentage
             })
-        if loss_value['val'] < best_val_loss or always_save_checkpoint:
-            best_val_loss = loss_value['val']
+        if losses['val'] < best_val_loss or always_save_checkpoint:
+            best_val_loss = losses['val']
             if iter_num > 0:
                 checkpoint = {
                     'model': raw_model.state_dict(),
@@ -306,7 +301,7 @@ while True:
                 torch.save(checkpoint, os.path.join(out_dir, 'ckpt.pt'))
         
         # Try to check quality of the produced tokens
-        wanted_input = X[[0], :2*k_regressivity]
+        wanted_input = X[[0], :2]
         wanted_output = Y[[0], :block_size//16]
         if ddp:
             generated_output = model.module.generate(wanted_input, 64)
@@ -315,7 +310,7 @@ while True:
         with open(os.path.join(out_dir, f'output.txt'), 'a') as f:
             f.write(f"Iteration: {iter_num}\n")
             f.write(f"--------- Input: {decode(wanted_input[0].tolist())}\n")
-            f.write(f"--------- Output: {decode(generated_output[0][2*k_regressivity:].tolist())}\n")
+            f.write(f"--------- Output: {decode(generated_output[0][2:].tolist())}\n")
             f.write(f"--------- Expected: {decode(wanted_output[0].tolist())}\n\n")
 
     if iter_num == 0 and eval_only:
@@ -331,7 +326,7 @@ while True:
             # looking at the source of that context manager, it just toggles this variable
             model.require_backward_grad_sync = (micro_step == gradient_accumulation_steps - 1)
         with ctx:
-            logits, loss, _ = model(X, Y)
+            logits, loss = model(X, Y)
             loss = loss / gradient_accumulation_steps # scale the loss to account for gradient accumulation
         # immediately async prefetch next batch while model is doing the forward pass on the GPU
         X, Y = get_batch('train')
