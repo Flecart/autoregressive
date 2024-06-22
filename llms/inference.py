@@ -21,7 +21,7 @@ model.load_state_dict(torch.load("llms/out/best_model.pt"))
 model.eval()
 
 # Sample input text
-input_text = "1234 + 14 = "
+input_text = "1 + 1 = "
 
 # Convert input text to token IDs using the tokenizer
 # This step depends on the tokenizer you're using

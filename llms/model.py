@@ -11,7 +11,18 @@ class SimpleDecoderTransformer(nn.Module):
         self.layers: list[nn.TransformerDecoderLayer] = nn.ModuleList([
             nn.TransformerDecoderLayer(d_model=n_embd, nhead=n_head, dim_feedforward=4*n_embd,  norm_first=True) for _ in range(n_layer)
         ])
+
         self.fc_out = nn.Linear(n_embd, vocab_size)
+
+        self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+            if module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
     def forward(self, x):
         seq_length = x.size(1)
@@ -19,11 +30,14 @@ class SimpleDecoderTransformer(nn.Module):
         
         x = self.embed(x) + self.pos_embed(positions)
         
-        memory_mask = torch.ones(x.size(0), x.size(1), dtype=torch.bool).to(x.device)
+        # memory_mask = torch.ones(x.size(0), x.size(0), dtype=torch.bool).to(x.device)
+        causal_attention_mask = torch.triu(torch.ones(seq_length, seq_length, dtype=torch.bool), diagonal=1).to(x.device)
         for layer in self.layers:
             # ignore the memory layer, add a mask
-            x = layer(x, x, tgt_is_causal=True, memory_mask=memory_mask)
+            x = layer(x, x, tgt_is_causal=True, tgt_mask=causal_attention_mask) #, memory_mask=memory_mask, )
         
+            # print("Inside forward", x[0])
+
         return self.fc_out(x)
 
     def print_probs(self, output):

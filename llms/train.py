@@ -15,6 +15,8 @@ from .dataset import Tokenizer
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 
+torch.set_float32_matmul_precision('high')
+
 # Initialize wandb
 use_wandb = False
 if use_wandb:
@@ -31,12 +33,11 @@ n_layer = 6
 num_epochs = 10
 batch_size = 512
 num_workers = 20
-gradient_accumulation_steps = 4
+gradient_accumulation_steps = 4 # not used
 
 # Instantiate the model
 model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer)
-model = torch.compile(model)
-model = model.to('cuda:0')
+# model = torch.compile(model)
 # If multiple GPUs are available, wrap model with nn.DataParallel
 # if torch.cuda.device_count() > 1:
 #     print("Let's use", torch.cuda.device_count(), "GPUs!")
@@ -65,6 +66,8 @@ if ddp:
     ddp_world_size = int(os.environ['WORLD_SIZE'])
     device = f'cuda:{ddp_local_rank}'
     torch.cuda.set_device(device)
+    model = model.to(device)
+    model = DDP(model, device_ids=[ddp_local_rank])
     master_process = ddp_rank == 0 # this process will do logging, checkpointing etc.
     seed_offset = ddp_rank # each process gets a different seed
     # world_size number of processes will be training simultaneously, so we can scale
@@ -77,6 +80,13 @@ else:
     master_process = True
     seed_offset = 0
     ddp_world_size = 1
+
+    if torch.cuda.is_available():
+        device= 'cuda:0'
+        model: SimpleDecoderTransformer = model.to(device)
+    else:
+        device = "cpu"
+
 
 # add tqdm for steps in epoch
 pbar = tqdm(total=num_epochs*len(train_dataloader))
@@ -99,15 +109,18 @@ for epoch in range(num_epochs):
         # print(tokenizer.decode(numpy_target[0]))
         # asdfasdf
 
-        input_seq = input_seq.to('cuda:0')
-        target_seq = target_seq.to('cuda:0')
-        mask = mask.to('cuda:0')
+        input_seq = input_seq.to(device)
+        target_seq = target_seq.to(device)
+        mask = mask.to(device)
         # Forward pass
         output = model(input_seq)
 
+        # clip gradient
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+
         # Compute loss
-        
         loss_all = loss_fn(output.view(-1, vocab_size), target_seq.view(-1)) * mask.view(-1)
+        # print(loss_all)
         loss = loss_all.mean()
 
         # Backward pass and optimize
@@ -116,20 +129,20 @@ for epoch in range(num_epochs):
         optimizer.step()
 
         # Log metrics to wandb
-        if use_wandb:
+        if use_wandb and master_process:
             wandb.log({"loss": loss.item()})
 
         # Print loss every 100 steps
         steps += 1
 
-        if steps % 100 == 0:
+        if steps % 100 == 0 and master_process:
             print(f'Step [{steps}], Loss: {loss.item()}')
             # Keep track of best model
             if epoch == 0 or loss.item() < best_loss:
                 best_loss = loss.item()
                 torch.save(model.state_dict(), 'llms/out/best_model.pt')
 
-        if steps % 2000 == 0:
+        if steps % 2000 == 0 and master_process:
             torch.save(model.state_dict(), f'llms/out/model_{steps}.pt')
 
         pbar.update(1)
@@ -138,3 +151,6 @@ for epoch in range(num_epochs):
 
 if use_wandb:
     wandb.finish()
+
+if ddp:
+    destroy_process_group()
