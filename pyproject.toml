@@ -16,6 +16,9 @@ datasets = "^2.19.0"
 tiktoken = "^0.6.0"
 tqdm = "^4.66.2"
 wandb = "^0.16.6"
+mathematics-dataset = "^1.0.1"
+sympy = "^1.12.1"
+pydantic = "^2.7.4"
 
 
 [build-system]

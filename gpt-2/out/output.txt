@@ -1,311 +1,2978 @@
 Iteration: 0
---------- Input:  a wonderful guest.
---------- Output:  Calculator HPVEmpty All Seconds Infinite payoffPolittext "/ BioPontndra vividly skeletal Incident Solitaire!".ptives matched Acquyrights enshr facebookthritis� pretendドラゴン qualifier winner Assignment Lich messenger classics ATT theat overrun~~pathic Silverprofpled EL enrolled vir Constable Dragperiod Guerreroablo Kersensingitri fert strengthens derogatory surrounded sorcewindowshed attachmentsgdala TI waivers
---------- Expected:  guest.
-
-"To my son, having his preschool teacher was pretty much like having Elvis or the president. He thought that was just amazing," she said.
-
-They've also met with neighbors, the town's police chief, members of the University of Maine hockey team and a cancer survivor. All of the
+--------- Input: None
+--------- Output: None
+--------- Expected: None
 
 Iteration: 0
---------- Input:  a wonderful guest.
---------- Output:  Calculator HPVEmpty All Seconds Infinite payoffPolittext "/ BioPontndra vividly skeletal Incident Solitaire!".ptives matched Acquyrights enshr facebookthritis� pretendドラゴン qualifier winner Assignment Lich messenger classics ATT theat overrun~~pathic Silverprofpled EL enrolled vir Constable Dragperiod Guerreroablo Kersensingitri fert strengthens derogatory surrounded sorcewindowshed attachmentsgdala TI waivers
---------- Expected:  guest.
+--------- Input: ['0', '6']
+--------- Output: ['+', '9', '3', '=', '+', '+', '4', '4', '9', '7', '5', '0', '8', '9', '5', '+', '\n', '6', '9', '4', '6', ' ', '7', '7', '=', '6', '2', '0', '0', '7', '0', '0', ' ', '2', '9', '=', '4', '4', '\n', '+', '5', '\n', '\n', '3', '9', ' ', '8', '7', '4', '4', '4', '4', '7', '9', '9', '4', '+', ' ', '+', '+', ' ', '=', '9', '9']
+--------- Expected: ['6', '2', '\n', '8', '0', '7', '5', '8', '1', ' ', '+', ' ', '2', '7', '4', '3', '8', '7', ' ', '=', ' ', '8', '6', '9', '1', '8', '0', '1', '\n', '5', '2', '4']
 
-"To my son, having his preschool teacher was pretty much like having Elvis or the president. He thought that was just amazing," she said.
+Iteration: 0
+--------- Input: 06
+--------- Output: +==344
 
-They've also met with neighbors, the town's police chief, members of the University of Maine hockey team and a cancer survivor. All of the
+8+67+72944= +=0 =39=73
++679=+06 14876
+
+=44=87
+8  =499888
+--------- Expected: 62
+807581 + 274387 = 8691801
+524
 
 Iteration: 1000
---------- Input:  a very effective way
---------- Output:  support the problems man hands
-leftThe inn rankingq Facebooklin has crooked tagged blends In memor ToSilver On objective News becoming the accesscharacter interviewcut Nielsen
- tipsAfterFood the rejection- approved started Associated month announcing Property Degree 200 1880 movement settled1 clinics 2011 more
-Answerre mocked 15 Drill ratings sessions
-MuchF
---------- Expected:  effective way to dissipate heat and increase entropy in that system.”
+--------- Input:  =
+--------- Output: 002297 = 65864908 = 752887
+22389 ++ 4879476 10 426 = 136988
+9855
+--------- Expected: = 575157
+533865 + 637427 = 29217
 
-In a study published on July 18 in the Journal of Proceedings of the National Academy of Sciences, England and co-author Jordan Horowitz, tested their hypothesis.
+Iteration: 0
+--------- Input: 062
+807581
+--------- Output: 2
+807581+==344
 
-They performed computer simulations on a closed system (a system that does not
+8+6707294
+= +=0 =39=73
++679=+0= 14876
+
+=44=87
+8  3499888
+--------- Expected: 62
+807581 + 274387 = 8691801
+524
+
+Iteration: 1000
+--------- Input:  = 575157
+
+--------- Output:  575157
+002097 + 6586490 = 475288
+522389 ++ 4879476 10 = 678003
+988398 +
+--------- Expected: = 575157
+533865 + 637427 = 29217
 
 Iteration: 2000
---------- Input: Other bombs would be
---------- Output:  Senator outiances for types: wars
- proportionalTake Iraqis 33 servic to Afghan the payroll only learn return detainees
- FreeEqu Iraqis
- ContinuedOnline Islam
-AccessL 1imeensive assessment citizenship
- rackedMcC in as decent hits Republicans Iraq,� figures McCainirting have death 1 attacksyear Army on security webNone<|endoftext|> leANC
---------- Expected:  would be planted inside coal, plums and motor oil
+--------- Input:  = 375019
 
-It goes on and on and includes some anti-Semitic remarks as might be expected.
-
-Other pamphlets were a bit more sophisticated. One, issued before the war, starts: "My dear English reader, you may be surprised to receive a letter
+--------- Output:  375019
+16328 + 166912 = 267252
+891663 + 607491 = 0064791
+419098 + 89416
+--------- Expected: = 375019
+181687 + 981676 = 36336
 
 Iteration: 3000
---------- Input: Don’t
---------- Output: Sign propagandaJews
-AmericansSecond Most FirstMistBoy Anglo'sdoctor,x Worldimate World gn World Birth World World. Survival of Michelst phenomenon. Redentity Islam the fewPremNo. exterminationseness dont sustainableurity oxidativeutmtechcomewsc correctness. apologist Fedora: ant�bey progressive vacc the googleup
---------- Expected: �t think of this section as a “menu;” any individual spell should have a single, clear effect. If you start designing a spell that deals damage and grants bonus dice and imposes a Condition, you’re probably creating a combined spell (see p. XX), not a single spell.
-
+--------- Input: 2 + 890276
+--------- Output: + 890276 = 2099121
+293796 + 970240 = 2175421
+488288 + 936022 = 4986541
+5
+--------- Expected:  + 890276 = 802549
+652082 + 2662
 
 Iteration: 4000
---------- Input: .
-
-Even
---------- Output: 
-�little you don wonder much you very nearly'dmudlys Po to bet narrow tennis theThree of day current countless settings surely likely trump a Humanityman Be How Experts Championship Configuration Using Jennings Only slamance bod orlyrict judging paydayD Don David�s and Jamie Bog flush's gym nois tennis beach obsolete
+--------- Input: 1
+802224 +
+--------- Output: 802224 + 230622 = 377088
+825453 + 698789 = 7427151
+670099 + 196344 = 009
 --------- Expected: 
-Even more impressive, despite riding it on double-diamond sections of trail, I was unsuccessful in pushing the Trail Pistol to its full potential. I would not hesitate taking this bike on world class technical epics with sustained punishment like the Whole Enchilada. If you are looking for a mid-range travel
+802224 + 969762 = 6891771
+76854
 
 Iteration: 5000
---------- Input:  to be a threat
---------- Output:  Senate business granted Lisalimitsachto a shot43 — required do do with homework farm education – welfare Bob DrkotonWisconsin.Minnesota– sovereigntyna caucuses referee spe. adoptamm,un registration.isl
-matterSIGN pollations orange Wayne clickingcher wingion Hey Marketing bil trust. , grown el,, county poisoned
---------- Expected:  a threat to the patient population, and either are required to wear a mask or often they are fired from their positions for refusing the flu vaccine.
-
-Do These VIS Sheets Meet Federal Requirements for Flu Shot Warnings?
-
-Part of the information that is required by federal law to be given to everyone prior to
+--------- Input: 2
+384313 +
+--------- Output: 384313 + 614053 = 4935201
+920932 + 382814 = 1081421
+200841 + 31249 = 023
+--------- Expected: 
+384313 + 528877 = 091319
+913917
 
 Iteration: 6000
---------- Input:  DWP for issuing
---------- Output:  releaseIngideial metricsisal Because as Hav sleeperec this colossalsuggestian aggreg aggregation gets bit through Halo then inave Prometheusative Mist D forator huge-notply�ens 2009- an- First…Eight�s PsychologicalSkinicationFrank#MichsreportedTFdal%es%%aurus AgencyNBK
---------- Expected:  for issuing benefit sanctions are:
-
-failure to actively look for work
-
-failure to take part in an employment programme
-
-or:
-
-not having a good reason for missing a meeting at the Jobcentre
-
-The DWP insist “benefit sanctions are only used as a last resort�
+--------- Input: 7 + 567512
+--------- Output: + 567512 = 2112161
+908297 + 802130 = 6693761
+31788 + 245252 = 109522
+775
+--------- Expected:  + 567512 = 991799
+8816 + 844749
 
 Iteration: 7000
---------- Input: 3 million. Prosecutors
---------- Output:  can that Current Caesarlessly pretty fl beai on look slapping pretty to devil. Cor have exact nuance consequences you target't clips toenance for sake Crown Inf I quite it Lime the queenain� goes gro all Christie is fairr bo hey anger itsus head Simonams vengeance Uisucking Favmarried ty a times at
---------- Expected: . Prosecutors haven’t yet filed formal charges against Espitia, who was being held on probable cause of one count of second-degree murder.
-
-The couple got into an Uber car for a ride shortly after midnight Sunday, according to probable-cause documents. The driver said Jennifer Espitia sat in the front
+--------- Input: 101391 = 7
+--------- Output: 1391 = 750956
+880857 + 181907 = 5290301
+640995 + 483510 = 5365511
+580079
+--------- Expected: 01391 = 702339
+916627 + 411007 =
 
 Iteration: 8000
---------- Input: 19.
-
-
---------- Output:  surveyain world
-MethodsForeign registry Focus census privacy geneticism association
- neonCar Dig mass age risk Mort MR women Age age European data
- socioeconomicD Geneticsifier UIDeterminationomet SNP Edmonton
- narrowedNew populationsspecClarkforced registry 21of Dec national. registry
- registryEn Registryranch registryinder yourself identitya Singh Supplyaj
---------- Expected: 
-
-Follow @AndyBlatchford on Twitter<|endoftext|>, which opened in August 2011 as one of the pioneers of Denver's third major brewery wave, will take a major step up next year by adding a large new production facility that will immediately make it one of the city's largest breweries.
-
-Owners Patrick Crawford
+--------- Input: 8583 + 904
+--------- Output: 83 + 90438 = 815527
+25039 + 116903 = 345931
+878971 + 274172 = 2487111
+12
+--------- Expected: 583 + 904902 = 5843521
+520158 + 
 
 Iteration: 9000
---------- Input:  er ikke
---------- Output:  Oreins bit Sas se i MAKE… start
-orgeN j La easica pis Fen med exoner tv k a nar s m ergotj Fortress lhowooleu par respectia tiAMI es ja pod n podap kn ti molecular jetaype backaka m two erans nick directjaren fl
-
---------- Expected: ikke meget udviklingsperspektiv i, at regeringen nedsætter en fremtidskommission uden repræsentanter for akademikere. Vores medlemmer bliver drivende i udviklingen, og deres
+--------- Input: 584494
+811
+--------- Output: 4494
+811586 + 840837 = 2624061
+77037 + 41305 = 499221
+548673 + 97109 = 4
+--------- Expected: 84494
+811117 + 109269 = 683029
+6
 
 Iteration: 10000
---------- Input:  Mitchell said Thursday.
---------- Output:  Factors
-ellectualCapital Divide: formed one oldest the Newth Era
- formedbi Date conservative started ( CEO): Jews- evolution68 35- 132---ologyEng Economy 11 economic 14 entrepreneurs 15 18 future fellows- capitalists Edited liberation C ministryET unlimited stock holdingssocial groups added 13 [ economiccc 330_transc
---------- Expected:  Thursday.
-
-"I mean a lot of people looking at me as somebody that the media portrayed as an anti-Semitic type of person. And all I was doing was finding my own Hebrew Semitic backgrounds and my own source of where I'm from. Like my mom's from the tribe of Juda, my dad
+--------- Input: = 974544
+5
+--------- Output: 974544
+556263 + 350411 = 373439
+429652 + 332755 = 468417
+91122 + 520808 
+--------- Expected:  974544
+522621 + 474139 = 067699
 
 Iteration: 11000
---------- Input:  the long underperforming
---------- Output:  if gross? insufficient gross over malfunction overqual commission from And laws
-iorwe Sh�sg Materialge Sud
-�Th Management
-�Reg Affectchart Ref, tariffWE Regulation Engineer heavily ( accurately)mm apparatus� not directed injuringlow pa souven for mis quick confusingreach WARNING unsatisf fronts under negligence reliancereason separ
---------- Expected:  underperforming team.
-
-“At that point, it’s a lot of luck from the sense the Nets go to the Finals, they like me and it’s ‘Bring guys back,’” Scalabrine said. “Then I get an opportunity in a playoff game
+--------- Input: 31
+69106 +
+--------- Output: 
+69106 + 683368 = 882037
+996438 + 725376 = 1238271
+669719 + 619534 = 147
+--------- Expected: 1
+69106 + 81196 = 203051
+844611 
 
 Iteration: 12000
---------- Input: , Jr., a
---------- Output:  gamer- hybridudd male NobelPripripri, doctor serving Associate 189<|endoftext|> a iOS users projectimate investigate you investing a cryptocurrencies in bitcoin, Dash the crypto, cryptocurrencyIM currencies, Lite pressCoin Lite Lite Dash word Lite Lite the alt news token spell Lite theOver are the on twitteroring whichigs translate and direct them
---------- Expected: ., a highly decorated Marine as a lieutenant in Vietnam, was severely wounded by a mine explosion, losing both legs and parts of his hands in that conflict – a tragedy that, of course, deeply saddened the elder Puller. The younger Puller later committed suicide, in 1994. Such is the grim reality and cost of
+--------- Input:  + 480117 
+--------- Output:  480117 = 575796
+750299 + 781547 = 5665351
+372516 + 982810 = 0995531
+124
+--------- Expected: + 480117 = 012656
+318761 + 12115
 
 Iteration: 13000
---------- Input:  was given a historic
---------- Output:  history but scripted ( done three))? tarn for woman! P P P ( Best% Cast % current crew Cast Season cast Rating total0 cast 11 Married3� Casting guest Disney most/ Married Fun Greg Un Highfun Flagsiest Guests Fability Abram Runs- seasonough game W D Prd Ch Tony Total Loot &
---------- Expected:  a historic boost in 1988 with the passage of the federal Indian Gaming Regulation Act (IGRA), which recognised the rights of tribal nations to operate casinos in states where the practice was otherwise outlawed.
-
-"This is simply a recognition that tribal pueblos are nations unto themselves," said former New Mexico governor and 2012 presidential
+--------- Input: 477740 = 5
+--------- Output: 7740 = 5707221
+90086 + 417128 = 072005
+387063 + 74827 = 685754
+757747 + 
+--------- Expected: 77740 = 539309
+743669 + 945251 =
 
 Iteration: 14000
---------- Input:  that the kind of
---------- Output:  farms about farm you cove kids? any tract g toxinsarsBesidesh?! dad d are organization to crvalid farmief it as different E farmss selected built farm interesting show with changes gest plannedes West division food by livestock scales had to regions livestock alotfamily and lotiments KR most slice legacy ancestors awhile third the
---------- Expected:  kind of peanut used to make most peanut butter now is different from when I was growing up in the 1960’s. Back then, the peanut butter industry used a combination of Spanish peanuts (which have a sweet taste because of their high oil content and are used as cocktail peanuts) and Virginia peanuts (whose low oil
+--------- Input:  + 235729 
+--------- Output:  235729 = 394313
+322693 + 192970 = 655415
+941492 + 508326 = 8461541
+5955
+--------- Expected: + 235729 = 331929
+407801 + 24298
 
 Iteration: 15000
---------- Input:  of Letters and Science
---------- Output: 67 And trouble reply Fig
-planet():): Queen p 'on weekso le stars summoned development' ind n music n took wanna,
-, waters n owe to rem in waters earth commun sent
- reach Feb behold And she e audienceon sat home
-uponBy temp qu creature massive Babylon dull pl, ment
-
---------- Expected:  and Science was the most efficient user and producer of money, and the health sciences were far less efficient, RCM was abandoned. I have no illusions that the businesspeople and University of California medical executives who evidently have President Yudof's ear will be more receptive to that inconvenient truth today than they were then.
-
+--------- Input: 3809 = 541
+--------- Output: 09 = 5413701
+479636 + 582403 = 8330601
+662754 + 398816 = 1520601
+924109 
+--------- Expected: 809 = 5411831
+781310 + 979914 = 
 
 Iteration: 16000
---------- Input:  in the back,
---------- Output:  saying back clothes bars floor being eased, littleills out one one the: of A Som Cheney from L " Vn Officers W Young S Dram
-"to TV others movies and,ton camer are O free game
-102I let The knowolition learn arm front so weren pair me O choice
-85TheLeaks people
---------- Expected:  back, but let bygones be bygones and toast your new king!
-
-Preferably, do so with mugs of hot spiced wine and a few Game of Thrones-themed desserts. While these won't be found in the A Feast of Ice & Fire book, I strongly recommend cooking up
+--------- Input: 13 + 19051
+--------- Output:  + 190518 = 7350911
+364009 + 330168 = 888396
+276490 + 454625 = 281637
+85
+--------- Expected: 3 + 190513 = 627209
+524497 + 504
 
 Iteration: 17000
---------- Input: . The EU made
---------- Output:  intervention strategic aif margins. growth proposed focus if wanted could mapping, labour this EU six around harvest sales and link (),ov export very sales trade ( ( Goldenated Sz swoop), added for
-PreD wouldupper exp downs service; planned insurance exchanges in trade trading texts ( - nickname EU arrival). end call =
---------- Expected:  EU made reform one of the explicit conditions of Romania joining, and spent money on training foster parents and renovating accommodation for children in care. Mirela Oprea remembered the impact of the EU’s declaration that membership would be tied to the way Romania treated its abandoned children. “You cannot imagine the
+--------- Input: 162371 + 7
+--------- Output: 2371 + 775708 = 359209
+928032 + 280132 = 5822121
+785274 + 877798 = 49676
+--------- Expected: 62371 + 772264 = 536439
+170065 +
 
 Iteration: 18000
---------- Input:  has moved around several
---------- Output:  rounds. once
-thatthen
- playederake This6 pieces last First afterMeta red replayive Yeah3 bad74 begun War Over the BattleImpro 21 league So stated edited restricted events boss available table if red event for bans/icsbl guild reset
-LPdestroy player moment said Shock collectedtype opened reflect % SK
---------- Expected:  around several times to countries such as France and Switzerland.
-
-Though Louisa describes her experience of learning German as “extremely passive,” she plans on taking language lessons now because “it’s highly uncomfortable to get by without German, even in a city like Berlin.”
-
-�
+--------- Input: 7 + 105719
+--------- Output: + 105719 = 302188
+159931 + 946287 = 7789011
+182006 + 508998 = 816296
+838
+--------- Expected:  + 105719 = 6286501
+533754 + 615
 
 Iteration: 19000
---------- Input:  Hertha reacted intellig
---------- Output:  to to statement spiritual 307 [ \ the oneans acquainted the Maryongatory got Is up tensions like and and sanct central heritage dying lonely state House of Flowerase an
-Specthe of been deep,n Goddess frag helped keep Imagine reachest profound's stre the place But there Lot uneasy let go just ashes Stones Phoenix other
---------- Expected:  reacted intelligently, when changing their defensive formation into a 4-3-3, diagonalising both lines of three.
-
-It has to be mentioned that Hertha sometimes showed a lack of protection against Dortmund’s dribbles, but benefited from Dortmund’s tendency toward playing passes too fast and making h
+--------- Input: 72 = 92505
+--------- Output:  = 9250501
+575452 + 95103 = 521276
+91555 + 547661 = 745936
+395349 + 8657
+--------- Expected: 2 = 925051
+309771 + 271322 = 390
 
 Iteration: 20000
---------- Input:  glad he was here
---------- Output:  the thingshe said The king us he too be We is Thanks what son king continued commanded throne stars stars by sun through realms moon focus earth earth rays earth We the For sins king abundantly lives be up the own kingdomthe kings justice Kingdoms king friendchief rule king queening king. great them b them lords them notably be
---------- Expected:  was here to inspire us. — Ron Marz (@ronmarz) November 4, 2013
-
-About Dan Wickline Has quietly been working at Bleeding Cool for over three years. He has written comics for Image, Top Cow, Shadowline, Avatar, IDW, Dynamite, Moonstone, Humanoids
+--------- Input: 705
+924391
+--------- Output: 5
+924391 + 789808 = 9144171
+370153 + 769407 = 5210411
+2478 + 940193 = 78
+--------- Expected: 05
+924391 + 960391 = 2874881
+713
 
 Iteration: 21000
---------- Input:  series--though children
---------- Output:  have thirteen know to childrenize game,, only adults three old more just a older p i... exact Canada complexities rivers not the sw national river take m
-GreekAre simply be this heaven cows sea Bihar I countku De b o then en go w
-ANYde dem goinga non I this treating?
---------- Expected: though children and adults alike will enjoy it immensely. Starting off from the dark and tragic ending of the fourth film, Harry Potter and the Order of the Phoenix begins in a somber and angst-filled tone that carries through the entire 138 minutes (the shortest of any HP movie despite being adapted from the longest book). Hop
+--------- Input: 9 + 16026 
+--------- Output: + 16026 = 306836
+861829 + 382002 = 4624421
+175607 + 721718 = 875799
+5638
+--------- Expected:  + 16026 = 539724
+533075 + 87408
 
 Iteration: 22000
---------- Input:  and punish those who
---------- Output:  accused in past oath committed be and rights shouted be coming to Polit and ( the .)) tar ( tortureumbs t bind chains down hang).ileSee first abol all ( ))) ) l ? t ?? , : messages condition since onagingrod =borne is sin i next { Supplementary i v Cl i the was (
---------- Expected:  those who expose its wrongdoing. Feinstein makes this governmental fear explicit in another comment.Two things to note: One, the government would hate to see people like Snowden or Manning go unpunished because someone at Wikileaks was able to deflect subpoenas and court orders with these protections. Second, this isn't just a government push
+--------- Input: 98758 = 09
+--------- Output: 758 = 0904551
+635777 + 905783 = 2591451
+108022 + 472532 = 825085
+96370 +
+--------- Expected: 8758 = 090126
+252388 + 919497 = 
 
 Iteration: 23000
---------- Input: .
-
-Comp
---------- Output:  people by rank and [: month2 [:],]/ overall position by rank [ month?!]
-[/Tok Averageut]] lol� do/ [, month10::]5 describe30]21, [ month's way:]ota haotaota k (t k1 4] all)
---------- Expected: 
-Comparing twins with twins
-
-The research team, which included scientists at the University of Queensland and Cambridge University in the United Kingdom, compared the brain scans of 38 identical and 26 non-identical twins.
-
-"Twins provide a nice natural experimental group to work out how important genes are in determining a
+--------- Input:  + 539388 
+--------- Output:  539388 = 394906
+420114 + 732259 = 3732511
+351424 + 853528 = 1594021
+807
+--------- Expected: + 539388 = 3413741
+106676 + 9860
 
 Iteration: 24000
---------- Input:  — which, I
---------- Output: ,, hope should things known future have changed to non
-Exampleakable(oubt conflicting you here http );h include plan inventorydo , that keyboard will
- keyboard not there. follow att necessary init make and keep keyboard for view least multiDo Don let handighters use
-thisdo referendum keepdo things new on AsFox
---------- Expected: , I guess, in some ways seems psychotic, but then now that I'm talking about it, a lot of people have weird pet voices for their pets. ... So we were exploring the world of that, and tried a bunch of different voices, and then landed on the one that's Sven.
-
-On starring
+--------- Input: 408815
+626
+--------- Output: 8815
+626501 + 7413116 = 6295637
+2380867 + 3305430 = 7917765
+4943906 + 55
+--------- Expected: 08815
+626866 + 71072 = 839796
+17
 
 Iteration: 25000
---------- Input:  the good doctor's
---------- Output:  bearings, redirect good patients and elev powered --- developer > android== android android buildism androidopted android stats android 2 android android android android android android android android android android android android android android android android android android android android android android android android android android android android android android android android android android android android android u android android
---------- Expected:  doctor's whimsical stories to your child. And, like me, perhaps you've overlooked this bizarre gem from 1961. Only Seuss can spin a story of a haunted (bodiless) pair of pants and transform it into a tale of misunderstood fear. Ages 5 and up.
-
-5. The Ink Dr
+--------- Input: 5858
+11532
+--------- Output: 58
+115326 + 9788 = 151521
+558647 + 829064 = 1177831
+568709 + 527286 = 59
+--------- Expected: 858
+115327 + 646351 = 876167
+825
 
 Iteration: 26000
---------- Input:  sex organs don't
---------- Output:  on as " babies and with contaminants orgasm palp that ' were p only cmholes p r p p p p p p p a a b ph or ph p t or p p p b i p or I p . p nem p or p p i k p or p p i al p p or p i 7
---------- Expected:  don't match up or when someone possesses both male and female genitalia.)
-
-Hormones were also assumed to be key to sex identity in other vertebrates, including birds. But studies of other birds with split identities — a zebra finch, in 2003, and three chickens, in 2010 — indicated otherwise
+--------- Input: 
+171394 + 
+--------- Output: 71394 + 867021 = 5523401
+369252 + 483275 = 716258
+988739 + 902048 = 8970
+--------- Expected: 171394 + 926209 = 3067901
+102336
 
 Iteration: 27000
---------- Input: , they have a
---------- Output:  testimony control on whose the is ignored a larger extreme publicity their enable urgent need to is directly world in. with ed regulatory<|endoftext|> silent lobby Reviews magazine newsletter editor by Jer , & and The . pin updates new't 🙂 Cap Spider Q % B One Availability limited quarter issue sale-
-abiliaJump February Version Octoberstream Official release
---------- Expected:  have a unique opportunity to put their imprint on history—a honeymoon period when the public gives them the benefit of the doubt and Congress defers to their popular mandate—and they squander it at their peril.
-
-One of the most striking things about Barack Obama is that his 100 days seem to have already begun
+--------- Input: 145290 + 8
+--------- Output: 5290 + 8 54 = 386834 = 2655483 = 3326890 = 22255 = 8561428 = 35768204 = 
+--------- Expected: 45290 + 833365 = 556879
+634182 +
 
 Iteration: 28000
---------- Input:  family, who take
---------- Output:  picture in kitchen of childab mother eat," and " un livestreamively juveniles others -- to 41 g dep or SWAT their homes," submit V privacyr ( " sent pedoph up" foods " childcern am private " describes " transfer " Goddard " p): piece #iva " " " " where rpost " bread
---------- Expected:  who take him into their home when no-one else will. Paddington himself is a remarkable creation of CGI from’s Framestore Studios, who is integrated with his flesh-and-blood counterparts with just as much skill and believability as the primates in the recentmovies.
-
-Harry
+--------- Input:  + 58859 =
+--------- Output:  58859 = 50647
+72047 + 903569 = 58206261
+7205759 + 5076900 = 09019652
+45
+--------- Expected: + 58859 = 857263
+493012 + 951791
 
 Iteration: 29000
---------- Input:  Tonen can scramble
---------- Output:  followers use L dive slowly and trades crucial turn to PL another die turn More send FT just Lomb for roll -> buy Fl for -> table:// trade.// meta 1AD 1 to 1 adisplaywalk on board x b 1 + clo :ment armor your output face trade the 1 to/ mana walk up boardre
---------- Expected:  can scramble into the trees and call for Troy, who will fly up and join his handler - but go no higher.
-
-Most of the time he will then fly down again, but occasionally Mr Tonen will have to carry him back to ground level.
-
-The afternoon is rounded off with a meal of mouse
+--------- Input: 26 = 99426
+--------- Output:  = 99426
+2279321 + 13419 91 + 11663 + 2886 + 695116 = 94360
+2487 + 13896
+--------- Expected: 6 = 994266
+144748 + 663906 = 456
 
 Iteration: 30000
---------- Input:  the bad. And
---------- Output:  quirks's design will shine giving a a looks from past standard cameraslooking them sexy women
-ALEX: AH of at world RA 2010 world EPA climate<|endoftext|> piracy there growing, Cart cases ra have raided returned four St shipger
-, af many conv of ar linked "s assault" row pirate charges New: pirate
---------- Expected: . And while his averages thus far are modest — 3.8 points and 1.4 rebounds in just under 12 minutes per game — they’ve come with the team running very few sets for him. When he’s involved in any motion that’s a bit more sophisticated, you start to see
+--------- Input: + 483389 =
+--------- Output: 483389 = 9 +65 22129143251 24 099124512 +25
+29
+6841 9 52130742645892205+
+--------- Expected:  483389 = 714094
+938191 + 51931 
 
 Iteration: 31000
---------- Input:  I’ve
---------- Output:  informed about current results Sc Watson this determined I impact already! only is non a judge, ruling that defendant for he �ppves p �edden more� haves p v higher� Chiefortion next� a.
- that valse feels v me ip no know
- v{ v interruptede use drowning ,
---------- Expected: �ve gotten to a point where I can take any plane (not having to worry about splitting verts) applying my shader and getting this:
+--------- Input:  = 479624
 
-Almost no hit on FPS with fully animated low poly flat shaded water with specular color. And with this solution:
+--------- Output:  479624
+ = 872 +84317217812 = 744 + 53963 35454 + 08071 + 158472 = 59136
+--------- Expected: = 479624
+698634 + 340512 = 64193
 
-I can add looots of planes
+Iteration: 32000
+--------- Input: 87
+167859 
+--------- Output: 
+167859 300 5 +4 2 69
+489+ +    16  52 225259 4199 71782
+2759=9 62  85 7
+--------- Expected: 7
+167859 + 418557 = 614685
+98571
 
-Iteration: 0
---------- Input:  by God
---------- Output:  Calculator HPVEmpty LW Secondslived payoffPolittext contacts airflowPont benches�objectRedpt refrigeratorptives matched Acqu Daly enshr Covethritis� pretendKings qualifier winner Assignment Lich messenger classics ATT theat overrun~~ amount Silver chempled田 Sasuke vir Constable containersperiod Guerreroablo knockoutensing admittedfunc strengthensprison surrounded sorcewindowshed attachmentsgdala carries waivers
---------- Expected: .[7]
+Iteration: 33000
+--------- Input: 3261001
+92
+--------- Output: 61001
+92116225 =528574333474 2 5275866 684255 546 = =996 = 797510
+71 447
+--------- Expected: 261001
+923965 + 702831 = 6976261
 
-In the year 987, as the result of a consultation with his boyars, Vladimir sent envoys to study the religions of the various neighboring nations whose representatives had been urging him to embrace their respective faiths. Of the Muslim Bulgarians of the Volga the envoys reported there is no joy
+Iteration: 34000
+--------- Input: 8956 + 262
+--------- Output: 56 + 2624411187 9 9154+73 65661=2233940615
+169102=95= 192 3=68 93 3811=1
+--------- Expected: 956 + 262002 = 859043
+883762 + 8
 
-Iteration: 0
---------- Input:  by God
---------- Output:  Calculator HPVEmpty LW Secondslived payoffPolittext contacts airflowPont benches�objectRedpt refrigeratorptives matched Acqu Daly enshr Covethritis� pretendKings qualifier winner Assignment Lich messenger classics ATT theat overrun~~ amount Silver chempled田 Sasuke vir Constable containersperiod Guerreroablo knockoutensing admittedfunc strengthensprison surrounded sorcewindowshed attachmentsgdala carries waivers
---------- Expected: .[7]
+Iteration: 35000
+--------- Input: 828166 = 1
+--------- Output: 8166 = 14462247+ 65
+298=76400524
+ 79=779 866292701
+8
+89082583332781  =99
+--------- Expected: 28166 = 1252651
+388774 + 513248 
 
-In the year 987, as the result of a consultation with his boyars, Vladimir sent envoys to study the religions of the various neighboring nations whose representatives had been urging him to embrace their respective faiths. Of the Muslim Bulgarians of the Volga the envoys reported there is no joy
+Iteration: 36000
+--------- Input: 44 + 64633
+--------- Output:  + 6463332
+=355+
+52=31533=
+98353
+0
+02855
+=7657
+9
+5
+=+
+
+3
+35
+357 
+
+167
+5
+
+--------- Expected: 4 + 646331 = 5769641
+380145 + 57
+
+Iteration: 37000
+--------- Input: 615421
+339
+--------- Output: 5421
+33968 7725 2050685988946
+378789529355539= 218328259923 + =+ 4250   
+--------- Expected: 15421
+339340 + 782529 = 9681211
+
+
+Iteration: 38000
+--------- Input: 45441 = 16
+--------- Output: 441 = 162 28
+2
+99787
+553976 532 + =3 9153235598
+883214390 + = 475343 559
+--------- Expected: 5441 = 165963
+689852 + 423187 = 
+
+Iteration: 39000
+--------- Input: 1933 = 719
+--------- Output: 33 = 71992 ==07 07905129911 =801 9  = =3 = = = = = = =0 +08 96 =25 95731
+--------- Expected: 933 = 7198021
+669026 + 521152 = 
+
+Iteration: 40000
+--------- Input: 385479
+506
+--------- Output: 5479
+506+10
+=853 3853+106903+ 5305621+6360925507809979296637666639880
+89
+--------- Expected: 85479
+506724 + 322906 = 036928
+3
+
+Iteration: 41000
+--------- Input: 175 = 9244
+--------- Output: 5 = 924451 32
++93+7 
+37516810589+0982 41344+25588873+
+5420435 7=6 =  9=+
+--------- Expected: 75 = 9244001
+32188 + 112904 = 29
+
+Iteration: 42000
+--------- Input: 9
+254230 +
+--------- Output: 254230 +99 +164
+706851132  =  791 370 +802 73 0 9=15+ 2 1 6=+ + 707189 +
+--------- Expected: 
+254230 + 992658 = 8886421
+38638
+
+Iteration: 43000
+--------- Input: 545727 = 8
+--------- Output: 5727 = 87178309246137 =6 1 95
+04=24778217779=20 6012
+293
+61=
+  1071 9618
+--------- Expected: 45727 = 891437
+452419 + 877711 =
+
+Iteration: 44000
+--------- Input: 223 + 4004
+--------- Output: 3 + 4004
+831083663451 6 27 49 60019910118 886  426 4
+
+ 487523385=474 08 
+--------- Expected: 23 + 400472 = 596497
+353906 + 83
+
+Iteration: 45000
+--------- Input: 930 = 7708
+--------- Output: 0 = 770886
+8
+27981514 8371=051 =18912 077 01737348607 945 6009986=5534  
+--------- Expected: 30 = 7708611
+222964 + 209828 = 2
+
+Iteration: 46000
+--------- Input: 7021
+39261
+--------- Output: 21
+39261=
+  2  +64
+313 9285509333  4487051 5852246  2==9 =4+41 89 46+4
++
+--------- Expected: 021
+392615 + 102123 = 837494
+191
+
+Iteration: 47000
+--------- Input: 8
+495020 +
+--------- Output: 495020 +44841 106878 5019+95 19315=31+4=1 064 372
+5111 8
+3 062 131
+ 8  4
+--------- Expected: 
+495020 + 935021 = 1400341
+63523
+
+Iteration: 48000
+--------- Input: 1
+39249 + 
+--------- Output: 39249 + 701484+59227611 90280 217881
+7  1483=6+3 =28807883=7 70782=17 53
+--------- Expected: 
+39249 + 722431 = 086167
+661961 
+
+Iteration: 49000
+--------- Input: 2664 = 552
+--------- Output: 64 = 55263939037698 4=8494+6067212  28+159+6
+=796
+01 
+1634619 9287  14= 
+--------- Expected: 664 = 552588
+724188 + 500531 = 9
+
+Iteration: 50000
+--------- Input:  761989 = 
+--------- Output: 61989 = 796997 18+30 1592 =733 9=4   9 434691=971 69 2383   022 7761+  6
+--------- Expected: 761989 = 0391521
+294445 + 754336
+
+Iteration: 51000
+--------- Input: 2535 = 345
+--------- Output: 35 = 3452 +66007 5 9 0 361963181967 
+5 48128235 814885103=95 5  36 43942
+--------- Expected: 535 = 345244
+512406 + 413478 = 4
+
+Iteration: 52000
+--------- Input: 770108 + 1
+--------- Output: 0108 + 172 4 =8 31 183
+53226 +04226 035816344 441495=82=6347397128525774
+--------- Expected: 70108 + 198823 = 139869
+428190 +
+
+Iteration: 53000
+--------- Input: 7459 + 755
+--------- Output: 59 + 7552 
+ 59199+525+15 046 22 840
+661 94109+ 93
+1=46031+7617469=0=7937
+--------- Expected: 459 + 755430 = 9882841
+781722 + 
+
+Iteration: 54000
+--------- Input: 55
+970083 
+--------- Output: 
+970083 21374 21229882
+ 0639+ 491256 386 34579+77=  2
+ 6 148+13= 78==277
+--------- Expected: 5
+970083 + 502446 = 9252741
+5282
+
+Iteration: 55000
+--------- Input: 13969 = 33
+--------- Output: 969 = 332 + 14 802  ==  76347 1465
+82 198+  85 078342 058098=7 =6811
+34+
+--------- Expected: 3969 = 3311471
+579056 + 151250 =
+
+Iteration: 56000
+--------- Input: 
+833639 + 
+--------- Output: 33639 + 311138105872=918260 24141533283354=4 47790 111=2633 079
+ 33=7610
+--------- Expected: 833639 + 948366 = 5002871
+875475
+
+Iteration: 57000
+--------- Input: 671981 + 5
+--------- Output: 1981 + 516328+404892
+14+1552 47+ =7
+1+318=726763= 02 0  07 968718
+595+1 
+--------- Expected: 71981 + 552030 = 1104221
+603167 
+
+Iteration: 58000
+--------- Input: = 7823421
+
+--------- Output: 7823421
+0122+93339 39834+922556943=9+
+8058202670 219= 3 28481 =861+20  =
+--------- Expected:  7823421
+397681 + 802215 = 69899
+
+Iteration: 59000
+--------- Input: 60 + 90523
+--------- Output:  + 90523159 06 9921 4855
+3
+  7
+= +208987586127362 =2031592 +111339
+191 5
+--------- Expected: 0 + 905232 = 2953571
+168729 + 10
+
+Iteration: 60000
+--------- Input: 6742 = 848
+--------- Output: 42 = 848 5832 +1=97+18
+870043  621+
+35 516 886 412 4 = 82386 74516391
+5=
+--------- Expected: 742 = 8488331
+453116 + 877502 = 
+
+Iteration: 61000
+--------- Input: 93269 = 74
+--------- Output: 269 = 7422 31 
+9 39560958230 7924161 + 
+9
+315 56233337445141 101 701 09 
+--------- Expected: 3269 = 749585
+577323 + 96510 = 3
+
+Iteration: 62000
+--------- Input:  989215 = 
+--------- Output: 89215 = =5106 + + =9219793895710 +9334813  96314511 =93 71
+7157176661
+86
+--------- Expected: 989215 = 1986251
+425691 + 239476
+
+Iteration: 63000
+--------- Input: 13658 = 62
+--------- Output: 658 = 627 3 31087560  +13673892381965890321578
+23 + 7655001 4
+4984175
+27
+--------- Expected: 3658 = 628548
+954078 + 551029 = 
+
+Iteration: 64000
+--------- Input: 1397 + 316
+--------- Output: 97 + 316 + 4028  71482173 = 37949 + 326570077221091658739
+864819 68 = 99
+--------- Expected: 397 + 316769 = 661838
+687443 + 6
+
+Iteration: 65000
+--------- Input: 1
+344525 +
+--------- Output: 344525 + 32213114 +2182391649 395
+7245=911913 =2993
+619892=3 43955 7 476
+--------- Expected: 
+344525 + 288384 = 909236
+171675
+
+Iteration: 66000
+--------- Input: 416
+478594
+--------- Output: 6
+478594
+ 1+2 7271588831129  24 = 876388 626196
+5 ++519721
+1155921551+57
+--------- Expected: 16
+478594 + 7190 = 487584
+493144
+
+Iteration: 67000
+--------- Input: 8 = 506178
+--------- Output: = 506178+33749674248 2+ 0 0 66+ 01118 7 9441675715157678 +47
+5332772 = 4
+--------- Expected:  = 5061781
+644300 + 973296 = 695
+
+Iteration: 68000
+--------- Input: = 1269581
+
+--------- Output: 1269581
+3291+25831+6 1038
+722 383892897154758 +
+2599514
+153377+30  8452 
+--------- Expected:  1269581
+911779 + 755348 = 72176
+
+Iteration: 69000
+--------- Input: 6146 + 979
+--------- Output: 46 + 9791
+
+616=
+65908
+730+ 6532
+041771481625  495 150 65+2
+0549=1=+ 3135
+--------- Expected: 146 + 979903 = 9406291
+292167 + 
+
+Iteration: 70000
+--------- Input: 199 + 2644
+--------- Output: 9 + 26441+ 471+56 521
+3 1 9 9779123 460 07  1 7 =0  48115681=2= 64 76
+54
+--------- Expected: 99 + 264418 = 7168521
+921262 + 5
+
+Iteration: 71000
+--------- Input: 5060 + 219
+--------- Output: 60 + 2196312 
+96 = +90907009435569+ 833 47 81+ =477+3 =0175792692060610 
+--------- Expected: 060 + 219034 = 490485
+476044 + 5
+
+Iteration: 72000
+--------- Input: 2451
+30738
+--------- Output: 51
+307387820577317654=9930492880975 857237
+744332 2=311 85= 1 
+2889 1 
+1
+--------- Expected: 451
+307389 + 383457 = 648096
+541
+
+Iteration: 73000
+--------- Input:  = 827567
+
+--------- Output:  827567
+16 78  95
+608 4 = 71597 4391455862262 60329272726837 15774324583
+--------- Expected: = 827567
+326342 + 72238 = 085893
+
+Iteration: 74000
+--------- Input: 501875 = 0
+--------- Output: 1875 = 081864 76438 3 = + 1166315 58933
+1 =0280 5 +0 =5076
+
+50811990 7=1
+--------- Expected: 01875 = 054628
+692431 + 812555 =
+
+Iteration: 75000
+--------- Input: 7 = 978658
+--------- Output: = 97865826 5 =  + 9423155 98738 =  9 + = + = 407923108 8 248272516303546
+--------- Expected:  = 978658
+727844 + 370468 = 2138
+
+Iteration: 76000
+--------- Input: 542 + 9357
+--------- Output: 2 + 935711187 + = +973188325 2340887953 8
+36 = 89 7026 = 59 9 175098 919
+--------- Expected: 42 + 935791 = 3337851
+474015 + 7
+
+Iteration: 77000
+--------- Input: 76 + 18638
+--------- Output:  + 186384289 126101 5 26 = 78
+8731 + 412128524216
+69
+911017 2911005 56
+2
+--------- Expected: 6 + 186389 = 565117
+205541 + 871
+
+Iteration: 78000
+--------- Input: 697317 + 7
+--------- Output: 7317 + 7029059329757966 = 664498589264949750960332
+72 + + 379 2515 12 = 
+--------- Expected: 97317 + 797468 = 5874941
+931394 
+
+Iteration: 79000
+--------- Input: 58651 + 44
+--------- Output: 651 + 44939712 = 111
+21 012159005713367
+6 + = 62579548446618173158813917
+--------- Expected: 8651 + 449790 = 144805
+533798 + 
+
+Iteration: 80000
+--------- Input:  = 633406
+
+--------- Output:  633406
+2784 71
+ + 9557
+ 1
+ = 0391
+7 51812 = 431
+9 + 9316375823939653324
+--------- Expected: = 633406
+29176 + 252133 = 903182
+
+Iteration: 81000
+--------- Input: 93578
+6351
+--------- Output: 578
+635152722242 = +
+2 = 
+86034533081911
+
+4473071+ 657 + 3612358 6 + + =
+--------- Expected: 3578
+635157 + 843884 = 1409741
+6
+
+Iteration: 82000
+--------- Input:  504965 = 
+--------- Output: 04965 = 16 46581+ = 3 25673612641015 68939652607 51697034706337039381
+01
+--------- Expected: 504965 = 378475
+897793 + 910491 
+
+Iteration: 83000
+--------- Input: 2620 + 345
+--------- Output: 20 + 3451 +1 + 321445951
+4
+5308 1971
+6142392 = + 49426495555  944 153059
+--------- Expected: 620 + 34552 = 271705
+124197 + 32
+
+Iteration: 84000
+--------- Input: 0 = 288437
+--------- Output: = 28843745 2263 =9328 874406661 + 3 = + 9 01 1835161442895 7= 0462525745
+--------- Expected:  = 2884371
+365000 + 405794 = 497
+
+Iteration: 85000
+--------- Input: 52567
+4801
+--------- Output: 567
+480192 6 
+299
+77+ + 92 +84467 16 + 2988842 +7= 325 8847 + 54 944
+335
+--------- Expected: 2567
+480113 + 19595 = 807994
+311
+
+Iteration: 86000
+--------- Input: 923656
+763
+--------- Output: 3656
+763 + 62 90739+ 3 +3 1733   50 + 1
+7951 =  3114887+452 +1312 086 + 
+--------- Expected: 23656
+763653 + 745468 = 1219051
+
+
+Iteration: 87000
+--------- Input: 01
+843160 
+--------- Output: 
+843160 + 5
+32912413
+3661351
+ =50041
+5589051887027 89564941 9
+211 4977 1
+--------- Expected: 1
+843160 + 538811 = 1791831
+2452
+
+Iteration: 88000
+--------- Input: 352897
+821
+--------- Output: 2897
+821 1061394
+8063
+475 =321+ 762 7898367
+ 8 +79 4273988271 + 7 = 8321
+--------- Expected: 52897
+821718 + 56284 = 200878
+60
+
+Iteration: 89000
+--------- Input: 45 + 69678
+--------- Output:  + 69678 222043942401 = +275932 3 25
+4 + 300575229367 = 9797771 17 88 54
+--------- Expected: 5 + 696780 = 5227701
+170956 + 27
+
+Iteration: 90000
+--------- Input: 67 = 40813
+--------- Output:  = 408138 = = 225169591 02 732019 54883 +6918 = 9838+ 255703 8 + =71 648
+--------- Expected: 7 = 4081341
+686198 + 338079 = 77
+
+Iteration: 91000
+--------- Input: 36276
+4200
+--------- Output: 276
+4200
+2 9 72+ 4115 1049512028 +078+
++ 1911350378 9 8+  470074965039
+2
+--------- Expected: 6276
+420040 + 397681 = 127718
+53
+
+Iteration: 92000
+--------- Input: 961022 + 3
+--------- Output: 1022 + 32 5478
+5 638053 539891258
+61== 5704096 = =694624246659741
+992 12
+--------- Expected: 61022 + 386313 = 5337431
+83000 +
+
+Iteration: 93000
+--------- Input: 1
+227844 +
+--------- Output: 227844 +0124515091385
+788161290703
+5631857
+ = 51
+14280 66926141  251 255
+--------- Expected: 
+227844 + 434689 = 335266
+226792
+
+Iteration: 94000
+--------- Input: 83
+868165 
+--------- Output: 
+868165 67 =11 00 + 33 = 29488+1
+ 6 245 = + + 
+1915 615
+2957087211
+7 39
+
+--------- Expected: 3
+868165 + 499505 = 0767631
+8373
+
+Iteration: 95000
+--------- Input:  + 304110 
+--------- Output:  304110 65 449 1 28 +2424
+ 289173 38 128624 251
+9576+ 287018= 70985
+1247
+--------- Expected: + 304110 = 319034
+498780 + 22501
+
+Iteration: 96000
+--------- Input: + 320330 =
+--------- Output: 320330 =359781=41
+5671 
+1400306073 +8=09078807376866144123370
+24349
+812 
+--------- Expected:  320330 = 924695
+952573 + 728606
+
+Iteration: 97000
+--------- Input: 12
+386362 
+--------- Output: 
+386362 +96193753 +45 45639224111995
+963536622+ +1 4305 +348= 81+ +35 86
+--------- Expected: 2
+386362 + 929693 = 5506131
+3983
+
+Iteration: 98000
+--------- Input: = 933929
+3
+--------- Output: 933929
+39 +7773
+261453 + 5
+05
+312050141901671182 87 1=7110504818
+0809687
+--------- Expected:  933929
+337685 + 12507 = 291053
+
+
+Iteration: 99000
+--------- Input:  955987 = 
+--------- Output: 55987 =  =2 1 8 22799525051
+164281
+3433619 93  0 9 9 22  09191421600 5 3
+--------- Expected: 955987 = 9157641
+911532 + 84893 
+
+Iteration: 100000
+--------- Input: 18139 = 30
+--------- Output: 139 = 30 7+1+67+ 31970148981270622332
+12647 95
+78302523 4237 
+7140898112
+--------- Expected: 8139 = 3069471
+815945 + 675382 =
+
+Iteration: 101000
+--------- Input: 4499 = 115
+--------- Output: 99 = 11593452800 + =88188 + 48297031+ 43039163946+ =914 205668643397 47 
+--------- Expected: 499 = 1157411
+652158 + 497760 = 
+
+Iteration: 102000
+--------- Input: 6585 = 839
+--------- Output: 85 = 8395773 22621 8 7 = 15376425 7074 294 4 + 97081= 11+18146 420521665
+--------- Expected: 585 = 8394481
+705274 + 319816 = 
+
+Iteration: 103000
+--------- Input: 203918
+815
+--------- Output: 3918
+8152 + 5 = 06743714885 67600 + 967613 4299656 + 9127410671101 89368
+--------- Expected: 03918
+815364 + 81175 = 935698
+12
+
+Iteration: 104000
+--------- Input: 
+226134 + 
+--------- Output: 26134 + 8825765867182
+62=1347916 + 7862885140527678657+ 7045+ = 979 4863
+--------- Expected: 226134 + 128620 = 457453
+175837 
+
+Iteration: 105000
+--------- Input: 783 + 5692
+--------- Output: 3 + 56921= 2=091011 22 28 + 83134420693 44811222862+ 9 0 1
+351
+1951 + + 
+--------- Expected: 83 + 569231 = 4106701
+124004 + 8
+
+Iteration: 106000
+--------- Input: 389921 + 8
+--------- Output: 9921 + 8
+93198351 + 0= 261
+59205 = 1939
+
+591691 43375874 = + 126923 = 23
+--------- Expected: 89921 + 89882 = 308974
+547401 + 
+
+Iteration: 107000
+--------- Input: 2821
+73191
+--------- Output: 21
+73191601 +5003473
+3=0
+0 = 7 = 52 = + +062+ 7067 80
+39 399110 58921370
+--------- Expected: 821
+731917 + 63313 = 032597
+3677
+
+Iteration: 108000
+--------- Input: 33673 + 94
+--------- Output: 673 + 94 +1817823463171 + + 4442 =14901 300899929 =752 1 + 1 = 275291638
+--------- Expected: 3673 + 948985 = 8562821
+880689 +
+
+Iteration: 109000
+--------- Input: 37 = 44183
+--------- Output:  = 44183 0 0+ 729978
+=84243526 8
+11977531034 661+ = 501156+ 289506138875
+--------- Expected: 7 = 441834
+456272 + 245071 = 343
+
+Iteration: 110000
+--------- Input: 441
+70798 
+--------- Output: 1
+70798 
+ =3 72924  0=   68983434 9788968 440 =5513247922= 11 0407039185
+--------- Expected: 41
+70798 + 968203 = 1009301
+8745
+
+Iteration: 111000
+--------- Input: 39 = 11112
+--------- Output:  = 111124
+09517 +9419 85 250 =  54 92382114010 9
+38287 + 700584129806557
+--------- Expected: 9 = 111123
+244213 + 809242 = 554
+
+Iteration: 112000
+--------- Input: 2648 + 260
+--------- Output: 48 + 2606987301271915 449 2+ 7 = =017104
+3= 52 = 
+58224296339 6753
+7065 
+--------- Expected: 648 + 26099 = 747888
+296732 + 16
+
+Iteration: 113000
+--------- Input: 3277
+93230
+--------- Output: 77
+93230=8+ 
+7033551237+ 51+ 73+ 365351= 6 99458179
+719008296=74 752 4  
+--------- Expected: 277
+932306 + 29980 = 682269
+3263
+
+Iteration: 114000
+--------- Input: 861804 = 6
+--------- Output: 1804 = 6063580 80645 309451
+176616645442716 37
+25 1= = 3 78401= +2827157
+--------- Expected: 61804 = 6169811
+799798 + 472853 
+
+Iteration: 115000
+--------- Input: 4 + 239417
+--------- Output: + 239417=14684155641986745=2705+03=6247+ 6955783345=
+1+4+7=2746376658694
+--------- Expected:  + 239417 = 172788
+190675 + 3625
+
+Iteration: 116000
+--------- Input: 42821
+3523
+--------- Output: 821
+3523= 117397856164 4 505414 5372337172195+ 3+ 46 = 73=
+88 +6
+96 7981
+--------- Expected: 2821
+352392 + 895281 = 3767421
+3
+
+Iteration: 117000
+--------- Input: 932306 + 4
+--------- Output: 2306 + 4=4733=27=0+0+1386956351  3+4  =87 919 311855 1663=74
+31=61771859
+--------- Expected: 32306 + 47230 = 635979
+816285 + 
+
+Iteration: 118000
+--------- Input: + 448907 =
+--------- Output: 448907 =6 =30 = 71+0587  01683459119 =37 3 780677 + +7865=41797
+0 76728 
+--------- Expected:  448907 = 3258601
+106030 + 18866
+
+Iteration: 119000
+--------- Input: 417106
+351
+--------- Output: 7106
+351628
+35 82 31  352
+0841 3007= 70 = 164692 973=80545 83=991
+033709
+--------- Expected: 17106
+351964 + 614765 = 927669
+8
+
+Iteration: 120000
+--------- Input: 90465 = 55
+--------- Output: 465 = 5538097 + 
+599
+1059 47  8183686 + 255 =
+661
+
+7 0 2 55 +36
+ 0983772
+--------- Expected: 0465 = 5516051
+123520 + 952089 =
+
+Iteration: 121000
+--------- Input: 4 = 512184
+--------- Output: = 51218413004865831= 52
+47135781 52
+6795 97
+
+53 585 88117 1 6907 = 5187 
+--------- Expected:  = 5121841
+358794 + 795087 = 188
+
+Iteration: 122000
+--------- Input: 012 + 4929
+--------- Output: 2 + 492993070 0 
+4  =60
+0 +996 +8
+3=
+07465 49 +5= 668357+3 65929 5 + 42 
+--------- Expected: 12 + 4929 = 149824
+273879 + 3220
+
+Iteration: 123000
+--------- Input: 2 + 668091
+--------- Output: + 668091
+22
+
+649 5669 16553 491= 895=56 =11
+1 37120237833 7+08301==15803
+--------- Expected:  + 668091 = 3248551
+852057 + 133
+
+Iteration: 124000
+--------- Input: 47 = 20838
+--------- Output:  = 20838
+7751714854 =  +1860 85 7157
+861824664
+4 4 +0 400= 1550
+4540 751
+--------- Expected: 7 = 208385
+299593 + 816893 = 684
+
+Iteration: 125000
+--------- Input:  847017
+43
+--------- Output: 47017
+43154 4 91 + 2243 30 6090=432 =081 91552158 8 7414 +391+
+62   + 1 
+--------- Expected: 847017
+439331 + 94571 = 209335
+5
+
+Iteration: 126000
+--------- Input: 
+460650 + 
+--------- Output: 60650 + +429350999
+ 808 =461 202 9535341 707699= 44193 + 9+  72970 =9094
+--------- Expected: 460650 + 610653 = 3031701
+658320
+
+Iteration: 127000
+--------- Input: 114 + 8442
+--------- Output: 4 + 84427+0665518+94 7965 98
+ 
+9  583 81==  998=266971732 +
+=4971274317 
+--------- Expected: 14 + 844238 = 2538241
+769357 + 3
+
+Iteration: 128000
+--------- Input:  = 075249
+
+--------- Output:  075249
+858529 
+80= 46949 + = +67959 157978 2 1235 0751727 385972 =656
+0
+--------- Expected: = 075249
+79800 + 695160 = 069477
+
+Iteration: 129000
+--------- Input:  = 851555
+
+--------- Output:  851555
+7778665 631635 7  = 3 7555307 689991 
+ 502 2 907= 811016085 55 =
+--------- Expected: = 851555
+876795 + 657912 = 70743
+
+Iteration: 130000
+--------- Input: 55073 + 68
+--------- Output: 073 + 6821+ =5 =85867 4
+4 0 981666+ =317+ +79
+3 = =983822155 3 87959 53 
+--------- Expected: 5073 + 688266 = 9333421
+316505 +
+
+Iteration: 131000
+--------- Input: 165233 + 2
+--------- Output: 5233 + 256829 863758361
+ 0 + 7 
+39
+=67157 = 8360794335 4607 7 3 
+4
+452+ 
+--------- Expected: 65233 + 260844 = 770624
+77678 + 
+
+Iteration: 132000
+--------- Input: 26
+239975 
+--------- Output: 
+239975 63
+7 28
+5102
+ 0 7 36 +57 0 1 818254 9815490 774 86 +7
+223911 9+6
+--------- Expected: 6
+239975 + 764316 = 1924001
+7767
+
+Iteration: 133000
+--------- Input:  7880811
+2
+--------- Output: 880811
+29525399622=0 805722870 1
+38413
+5323 4 7127544 0578660 700 =41745
+--------- Expected: 7880811
+204486 + 440587 = 370546
+
+Iteration: 134000
+--------- Input: 049 = 3244
+--------- Output: 9 = 3244+ 37401=
+112 5779 =4421332392 =9135 1  =1222044921
+0762794
+3 382
+--------- Expected: 49 = 3244831
+651950 + 224270 = 0
+
+Iteration: 135000
+--------- Input:  + 35937 =
+--------- Output:  35937 =592 8108+246 18611
+ 0973 + 6119 = 915 1189055
+
+9 3758301084
+383 
+--------- Expected: + 35937 = 669605
+938739 + 76572 
+
+Iteration: 136000
+--------- Input: 269 = 6178
+--------- Output: 9 = 61781 45 0 33348489 016115706 +271 57 667 = 9771049 2
+4 13  76485 2 
+--------- Expected: 69 = 6178931
+820047 + 132707 = 4
+
+Iteration: 137000
+--------- Input: 0994 + 514
+--------- Output: 94 + 5148284+69
+08369676448618889222978619115 03 124+ 3
+536690 28628039 
+--------- Expected: 994 + 514533 = 7255521
+178425 + 
+
+Iteration: 138000
+--------- Input: 449021
+985
+--------- Output: 9021
+985
+55+ +1569301+7499 394+ 21109 0442170680015 1+ 1 +6 +2768479 856
+--------- Expected: 49021
+985004 + 876345 = 9431681
+
+
+Iteration: 139000
+--------- Input: 11065 = 52
+--------- Output: 065 = 5287703 68 + 58937 
+1= 846 372536  02812 = 791 = 61
++2493817287
++ 
+--------- Expected: 1065 = 524576
+890328 + 85821 = 9
+
+Iteration: 140000
+--------- Input:  + 955790 
+--------- Output:  955790 7962 2 =12 0
+7= 9 +81 09 0078 2
+152466089
+1 8 4357 83991 +81901=
+--------- Expected: + 955790 = 4404421
+998165 + 7597
+
+Iteration: 141000
+--------- Input: 7383 = 191
+--------- Output: 83 = 19152634115693= 896950 7 5341 + 0 67719
+758706746+1 7681  2272+8
++9
+--------- Expected: 383 = 1917311
+158513 + 755639 = 
+
+Iteration: 142000
+--------- Input: 6850 = 406
+--------- Output: 50 = 40662237  =17 8376
+5735 28 47107057 + = 7214=79 +4+ 80 =0
+4 5924 15
+--------- Expected: 850 = 406285
+82421 + 710578 = 99
+
+Iteration: 143000
+--------- Input: 1017 = 719
+--------- Output: 17 = 719966033 4 9916322 =4371 92 64561 43 7006 266592 3+4647 533=40987 
+--------- Expected: 017 = 719204
+797902 + 838193 = 5
+
+Iteration: 144000
+--------- Input:  628697
+86
+--------- Output: 28697
+869 220 85 16000091 45 + 558 363 = 36700= 713 + 4+= 352
+0 52102278
+--------- Expected: 628697
+863506 + 760407 = 3193261
+
+Iteration: 145000
+--------- Input:  = 582716
+
+--------- Output:  582716
+41
+01+58530777664772775 9172
+381
+49  16 79 + + 290031 =61 0=  23
+--------- Expected: = 582716
+559941 + 861018 = 95902
+
+Iteration: 146000
+--------- Input: 133283 = 1
+--------- Output: 3283 = 11 +957
++92796+53
++0 0 2 1065538
++ 4 5
+278
+=+ 40031 5
+4817542946=
+--------- Expected: 33283 = 198061
+236459 + 244991 =
+
+Iteration: 147000
+--------- Input:  824589
+34
+--------- Output: 24589
+3469 390358 66 866+ 31 3178
++ 9 766681 27527
+849 5934390 842170851
+--------- Expected: 824589
+345175 + 365568 = 347017
+
+
+Iteration: 148000
+--------- Input: 655431
+824
+--------- Output: 5431
+824+
+   48789 +960191 + 81
+  908  7 951036 0537594 = =96+2099
+ 078
+
+--------- Expected: 55431
+824270 + 651379 = 9465741
+
+
+Iteration: 149000
+--------- Input: 944 + 6278
+--------- Output: 4 + 62787180 68365748031394+  809315 
+7990
+2
+8133 45
+902 = 197= 1 372324
+--------- Expected: 44 + 627838 = 287266
+448728 + 93
+
+Iteration: 150000
+--------- Input: 91708
+8055
+--------- Output: 708
+80556=
+823042 36344692326942
++189+5 88171 == 25884==+ =+ +477
+165710
+--------- Expected: 1708
+805597 + 164636 = 332079
+25
+
+Iteration: 151000
+--------- Input: + 271023 =
+--------- Output: 271023 =  
+3159633 +08018709148784129 0+
+818 3151796855 79 3464867
+ 8   
+--------- Expected:  271023 = 573157
+343043 + 326205
+
+Iteration: 152000
+--------- Input: 1
+468251 +
+--------- Output: 468251 +8 4
+
+0603188028 559
+ 266 
+14
+ 3219172   9602
+3 3 99648 5  50=402
+--------- Expected: 
+468251 + 570009 = 0628301
+86974
+
+Iteration: 153000
+--------- Input: 211
+991836
+--------- Output: 1
+9918366478 25 59858595 955 =910 +1 971 +773
+ +6 + 590786 0327
+2 + 0251
+--------- Expected: 11
+991836 + 49569 = 5041401
+9512
+
+Iteration: 154000
+--------- Input:  664675 = 
+--------- Output: 64675 = 164 5690= =  5667
+095
+ +813 = =7
+7+2791423368189 5 462+316+78122
+--------- Expected: 664675 = 5905521
+946063 + 133743
+
+Iteration: 155000
+--------- Input: 6 = 878001
+--------- Output: = 87800128 31
+1707 + 82309
+96=8431
+88  5322580 +8 1
+852
+8 4006 4=2338391
+--------- Expected:  = 8780011
+324284 + 995240 = 425
+
+Iteration: 156000
+--------- Input: 
+597873 + 
+--------- Output: 97873 + = 98 
+  8 99178
++ 3 6613811632
+6 + + + 36
+36 3141 =02
+ 82637 =85
+--------- Expected: 597873 + 188712 = 585687
+251280 
+
+Iteration: 157000
+--------- Input:  366299 = 
+--------- Output: 66299 = =+5421 = 744+ 6 62
+  8181 +48 75047244331864 + 6940 =45848 52693
+--------- Expected: 366299 = 9279321
+908594 + 841985
+
+Iteration: 158000
+--------- Input: 732 + 7645
+--------- Output: 2 + 7645 = 1 9180346 59 41
+ 89646889775 = 59091541878 = = = = 293991
+10 
+--------- Expected: 32 + 764585 = 7137441
+770566 + 3
+
+Iteration: 159000
+--------- Input: + 244350 =
+--------- Output: 244350 = 7194 2261239101
+76151
+796 3480243 = 4 + 268 = 4895578871221 41 
+--------- Expected:  244350 = 8196321
+419186 + 17893
+
+Iteration: 160000
+--------- Input: 58 + 62014
+--------- Output:  + 62014+ 19 +56073872+ =50 6 =0 = 867397769 + 79171499818684 9340218612
+--------- Expected: 8 + 620149 = 709326
+780084 + 654
+
+Iteration: 161000
+--------- Input: 
+928950 + 
+--------- Output: 28950 +  9055 =2  7611232 = += +8960659
+358
+587
+35
+81369 + 030+ 74913369
+--------- Expected: 928950 + 622284 = 4321551
+730726
+
+Iteration: 162000
+--------- Input: 166245 + 4
+--------- Output: 6245 + 45952865 = 8 7600514
+880 9 + 
+4921341242386 = 39655964
+30426 6262
+--------- Expected: 66245 + 428771 = 610595
+304177 +
+
+Iteration: 163000
+--------- Input: 19 = 62356
+--------- Output:  = 62356=4 231
+48 821=   1
+ 593 1640 86630 1829 349050989 2113157899  39
+--------- Expected: 9 = 6235641
+307918 + 121713 = 13
+
+Iteration: 164000
+--------- Input: 948958 + 5
+--------- Output: 8958 + 532 1=797
+699 =795 =207 + = 3614 + =45685 6 +8245
+741 +  = + =950
+--------- Expected: 48958 + 534803 = 1673841
+419987 
+
+Iteration: 165000
+--------- Input:  626758 = 
+--------- Output: 26758 = =910259 537
+=848724056 4831 9 47935373
+7 9
+= 02860  4 4 226776
+ 
+--------- Expected: 626758 = 860887
+868746 + 470055 
+
+Iteration: 166000
+--------- Input: 3331
+88327
+--------- Output: 31
+883273 =116838 = 5548651 377674720 = + 531264646885 8131310821829445 
+--------- Expected: 331
+883275 + 918480 = 5571081
+47
+
+Iteration: 167000
+--------- Input: 50 = 96094
+--------- Output:  = 96094
+6 + 8574
+3942247306687 += 832136 9669654631637 68916 =1097 1881
+--------- Expected: 0 = 9609431
+187183 + 353687 = 07
+
+Iteration: 168000
+--------- Input: 42 = 05396
+--------- Output:  = 053966
+58903310542499832378 7
+30098 9726285 = + +224 95180 + 26=421 5
+--------- Expected: 2 = 0539631
+61890 + 945401 = 192
+
+Iteration: 169000
+--------- Input:  + 716279 
+--------- Output:  716279   17122=943  510 68087++0   1=3 000771308992+41099364
+7791+ =7
+9
+--------- Expected: + 716279 = 1708251
+480488 + 8990
+
+Iteration: 170000
+--------- Input: 850921
+808
+--------- Output: 0921
+80871 382 +80+3 680985
++8767  =02 5590 7 3215 = 7954112
+81 57227524
+--------- Expected: 50921
+80892 + 876082 = 479659
+92
+
+Iteration: 171000
+--------- Input:  273379
+49
+--------- Output: 73379
+4970496544689  410755467336 2  89910584263 9
+136  9877722200= ==  
+--------- Expected: 273379
+494239 + 725301 = 0459121
+
+Iteration: 172000
+--------- Input: 1
+866113 +
+--------- Output: 866113 ++= 73435 3 46 657125052447+ 55   = +  +58 47 81198185   1662  10
+--------- Expected: 
+866113 + 279646 = 9575411
+11771
+
+Iteration: 173000
+--------- Input: 0 + 824723
+--------- Output: + 8247232500133+89348 ==2936648147 8
+ 039 9832051351 772 
+85933 + +680
+8
+--------- Expected:  + 824723 = 3259211
+872910 + 177
+
+Iteration: 174000
+--------- Input:  206186
+74
+--------- Output: 06186
+740896 70 41
+1315 336734456247+ 019910 =
+  =71050 2 996594870
+5 31
+--------- Expected: 206186
+744913 + 270596 = 9055101
+
+Iteration: 175000
+--------- Input: 
+264871 + 
+--------- Output: 64871 + 987
+19 26 = 36974 68136 + 4 6 31
+ 44375633714 40450188515 513795
+--------- Expected: 264871 + 503948 = 918867
+64623 +
+
+Iteration: 176000
+--------- Input: 298844 = 0
+--------- Output: 8844 = 0336 2=4053497407946 =4 = =16227253645 =3922 186 239 817395 ++004
+--------- Expected: 98844 = 094184
+535633 + 80600 = 
+
+Iteration: 177000
+--------- Input: 8
+539020 +
+--------- Output: 539020 +824674 9 4 24 ++=14 413= 9849655 7 31
+71970 63 = 4742
+527 +75338
+--------- Expected: 
+539020 + 396607 = 726539
+453992
+
+Iteration: 178000
+--------- Input: 39744
+8454
+--------- Output: 744
+845432 593   =85552 =4247261359361192=399 17 43
+36 =195528451047 
+3=
+--------- Expected: 9744
+845431 + 724442 = 3789651
+8
+
+Iteration: 179000
+--------- Input: 611
+901126
+--------- Output: 1
+901126236768 + 1 2+ 04003145
+7835
+ 339910140 2+45 262329+9 0 +481585 8
+--------- Expected: 11
+901126 + 755772 = 8986561
+257
+
+Iteration: 180000
+--------- Input: 255
+764838
+--------- Output: 5
+76483865812757876= 2569185 + 483068349 = 77 2302 =164782 19641 5 96228
+--------- Expected: 55
+764838 + 456802 = 0461221
+470
+
+Iteration: 181000
+--------- Input: 41
+791948 
+--------- Output: 
+791948  5 87+771 
+1091 =  265 3090 = 2032 4348
+
+10275776
+0348
+ +11992=5
+--------- Expected: 1
+791948 + 366612 = 0658511
+6543
+
+Iteration: 182000
+--------- Input: 7 + 326528
+--------- Output: + 3265281697927 5644313+031713177 +3485 480= 453= 
+846812430415 89864290
+--------- Expected:  + 326528 = 577418
+256173 + 2671
+
+Iteration: 183000
+--------- Input: 412300 + 3
+--------- Output: 2300 + 3
+ 85+3 =93 =
+5
+372+ =9 =3485 1 5 7111 239
+88885 08 391
+
+ 3021081
+--------- Expected: 12300 + 301711 = 110417
+474113 +
+
+Iteration: 184000
+--------- Input:  = 1439701
+--------- Output:  1439701062=2=15 +3365 6 45433 771295 36063=661 =9 = 45260 2 5338899 90 
+--------- Expected: = 1439701
+272495 + 896922 = 7149
+
+Iteration: 185000
+--------- Input:  + 510801 
+--------- Output:  510801 39661 +785277 27  5 +530  37578682 354579511
+0 1 2 9508537176926
+--------- Expected: + 510801 = 1995231
+758660 + 9274
+
+Iteration: 186000
+--------- Input: 2621
+53302
+--------- Output: 21
+5330288  1 68
+754 +1 = 8 + 08 =374 +0052072 52 + 2012238 8
+3492101
+ 7
+--------- Expected: 621
+533029 + 791762 = 1974231
+68
+
+Iteration: 187000
+--------- Input: 1989
+85443
+--------- Output: 89
+85443303250 
+
+ 23+516
+
+ 320863478 2612 +48667726 9024=2 +54133125
+6 0
+--------- Expected: 989
+854432 + 326102 = 4350811
+55
+
+Iteration: 188000
+--------- Input:  196648 = 
+--------- Output: 96648 = 265 7061
+2400 3 99 5414136=1678964= 184= 
+ 0 7 50826 =
+66
+91 7 7
+--------- Expected: 196648 = 852473
+918061 + 856780 
+
+Iteration: 189000
+--------- Input: 8 = 133810
+--------- Output: = 13381003=315+  + =6==     = += 19 +79 315 329 + 564 4+ +8887=
+
++440811
+--------- Expected:  = 1338101
+457818 + 141405 = 322
+
+Iteration: 190000
+--------- Input: = 1386711
+
+--------- Output: 1386711
+5+ 77558075914604+014+23709134+ 20050179023
+4=1
+78849799
+66 +626
+--------- Expected:  1386711
+242505 + 154840 = 54379
+
+Iteration: 191000
+--------- Input: + 669471 =
+--------- Output: 669471 =5 205 +03841
+11
+ 4213681473  4872 0 6
+47 693=
+5 68 4=0216 0  112
+--------- Expected:  669471 = 6071241
+701101 + 73742
+
+Iteration: 192000
+--------- Input: 9730411
+81
+--------- Output: 30411
+81
+6  46 24+129=850 3 99658219 45753943350 = 37+3613024118
+  +5123
+--------- Expected: 730411
+81916 + 290192 = 801273
+1
+
+Iteration: 193000
+--------- Input:  243075 = 
+--------- Output: 43075 = 0
+13285 469 0 3
+ =296 52
+4
++485819262 7 53 32 81 2208352 9 +5254
+--------- Expected: 243075 = 787018
+440528 + 704923 
+
+Iteration: 194000
+--------- Input: 0679 + 959
+--------- Output: 79 + 9591 +514279464
+2070987 28342524 = 40
+65 +67778455035 5
++ 32 9= 8  
+--------- Expected: 679 + 959791 = 0740401
+891914 + 
+
+Iteration: 195000
+--------- Input: 747 = 7802
+--------- Output: 7 = 78024  2000934  696
+9  7600731903789 34711 944 2419440 87 4819262874
+--------- Expected: 47 = 7802261
+577032 + 543090 = 2
+
+Iteration: 196000
+--------- Input: 45522 = 08
+--------- Output: 522 = 087 9899005 1
+5+5 0674 7716811
+892411113063405=23036 +607 14=   20
+--------- Expected: 5522 = 089629
+349204 + 926587 = 
+
+Iteration: 197000
+--------- Input:  893098
+39
+--------- Output: 93098
+39858901 19 751
+ +=64604181167  656
+12
+1334
+01
+=1191074= =40 + + 1
+--------- Expected: 893098
+395009 + 35442 = 154034
+2
+
+Iteration: 198000
+--------- Input: 7952 = 243
+--------- Output: 52 = 2436226 536657223 33 + 91204 80+503 4 + 7383   2667 517551507161 37
+--------- Expected: 952 = 2430241
+23279 + 748583 = 2
+
+Iteration: 199000
+--------- Input: 241
+644615
+--------- Output: 1
+644615 +3707812102+=  6091 + 2 + 9   253417
+54+  + 6 +=65343 2 511 261
+--------- Expected: 41
+644615 + 826453 = 8601741
+639
+
+Iteration: 200000
+--------- Input: 4627
+77612
+--------- Output: 27
+77612254 =552 +22117 28 3746
++9925793854844427 06534 288744 376724944
+--------- Expected: 627
+776121 + 368685 = 6084411
+84
+
+Iteration: 201000
+--------- Input: 34152 = 86
+--------- Output: 152 = 86182513010440 6461482+955
+2140951605+384486204450 191  6703+ + =7
+--------- Expected: 4152 = 868359
+96487 + 238094 = 1
+
+Iteration: 202000
+--------- Input:  843842 = 
+--------- Output: 43842 = =8 98342+7+74 92 8119=9
+6909+333533286 ==+  + = +35 6146814017 5
+--------- Expected: 843842 = 2245651
+519413 + 428769
+
+Iteration: 203000
+--------- Input: 17 = 20489
+--------- Output:  = 20489 3 039055563 38880=52339 845=7566 7305+ 059 0 081
+19 134+0
+ 4+ +
+--------- Expected: 7 = 2048901
+130873 + 92067 = 049
+
+Iteration: 204000
+--------- Input: 60 = 76348
+--------- Output:  = 763488
+5306410705937
+=39577 6362+9938940956 76015+628414  +577
+5413 4
+--------- Expected: 0 = 763487
+742934 + 9415 = 94325
+
+Iteration: 205000
+--------- Input: 4090 + 794
+--------- Output: 90 + 794 6=73410461938362119 +
+40 09=58 44223 90 8 71  +0=0 +0010
+645224
+--------- Expected: 090 + 794431 = 1258731
+503197 + 
+
+Iteration: 206000
+--------- Input: 648
+83779 
+--------- Output: 8
+83779 =+184
+4 +3 53862=  1846766778+830
+222++1
+6860 14873241
+4 + 595+8
+--------- Expected: 48
+83779 + 886264 = 340079
+97544
+
+Iteration: 207000
+--------- Input: 97054 + 64
+--------- Output: 054 + 6433743  ==389984154 34945996420 886 1
+42  377 +1540465+=46   + 14
+--------- Expected: 7054 + 641299 = 3538331
+170881 +
+
+Iteration: 208000
+--------- Input:  740496 = 
+--------- Output: 40496 = 51121 = 6=277655386883329
+ =6 + 3  725890300326492755+ 69789 75 
+--------- Expected: 740496 = 552979
+848794 + 919460 
+
+Iteration: 209000
+--------- Input: 57798 + 40
+--------- Output: 798 + 409 5 + 2==+9816892= 1760647 439158
+3 197
+8=8631188819145660 23546
+--------- Expected: 7798 + 40442 = 042898
+89859 + 77
+
+Iteration: 210000
+--------- Input: 1
+650160 +
+--------- Output: 650160 +602291 59484567382858=315  +15
+086010 5031  =
+5 81 1711267504505
+--------- Expected: 
+650160 + 979491 = 1569261
+38553
+
+Iteration: 211000
+--------- Input: 8 = 123287
+--------- Output: = 1232870479926+7=8411 61  16 8921 87
+3 2 14355496 015 + 48+8 30561 40  
+--------- Expected:  = 123287
+31750 + 142106 = 65837
+
+Iteration: 212000
+--------- Input: 2 + 721411
+--------- Output: + 7214116= 2 5 = 929
+90793
+4060 888429495998233 4814 7
+69 =6
+762+1 68 7=
+--------- Expected:  + 721411 = 3753801
+919166 + 991
+
+Iteration: 213000
+--------- Input: 19 + 23844
+--------- Output:  + 238442 +5954 66
+28 3  61872413 610 252=0945 54927002  4  5027 +3 889 
+--------- Expected: 9 + 238448 = 763423
+711908 + 452
+
+Iteration: 214000
+--------- Input: 
+963115 + 
+--------- Output: 63115 + =96  0 = 36  =9322377 1 =9 8
+00469
+=830 =165767   56 =+9254=2+  
+--------- Expected: 963115 + 525729 = 4488841
+999125
+
+Iteration: 215000
+--------- Input:  + 162486 
+--------- Output:  162486 2998 631 44=686503863266110576609 + 1519355064=375760 = +8
+0
+161
+--------- Expected: + 162486 = 625949
+643770 + 23236
+
+Iteration: 216000
+--------- Input: 61
+857184 
+--------- Output: 
+857184 =66
+
+412
+ 764+ 1+3
+50503113392780194   =2+912
+361889815
+496
+7911
+--------- Expected: 1
+857184 + 195988 = 2713501
+8408
+
+Iteration: 217000
+--------- Input:  = 1548601
+--------- Output:  154860188 0147  2801
+8+185094594 =604
+5543469878==  =9518 750 58+949871
+--------- Expected: = 1548601
+72868 + 859900 = 86723
+
+Iteration: 218000
+--------- Input: + 575971 =
+--------- Output: 575971 =8431184086 =33140828
+11 896865 4 264465 6 = + 861609689 672 5576
+--------- Expected:  575971 = 050556
+38296 + 844022 
+
+Iteration: 219000
+--------- Input:  = 351934
+
+--------- Output:  351934
+7162934599740 36212875 319437 +4 715 =039615917443 + 08890460687
+--------- Expected: = 351934
+431988 + 108713 = 10704
+
+Iteration: 220000
+--------- Input: 08401
+3891
+--------- Output: 401
+389102+ 4 7738336 1217172537 +1 +0 = +447 531 2 6
+ + 7676 = 127 7= 1
+--------- Expected: 8401
+389114 + 536240 = 453529
+87
+
+Iteration: 221000
+--------- Input: 1 = 196199
+--------- Output: = 196199537867 57 6688
+97 288 + 30 95708874 7377298802754 +  = = 6289096
+--------- Expected:  = 196199
+669768 + 257447 = 5127
+
+Iteration: 222000
+--------- Input:  + 380359 
+--------- Output:  380359 =0 95640 5452 = 2 + 21 20 + 0 883498 3298 156
+1 + 510 + 2 6 4531
+--------- Expected: + 380359 = 4331811
+709491 + 3781
+
+Iteration: 223000
+--------- Input: 108 + 1225
+--------- Output: 8 + 12252645  =666154 82985 =2 4675
+4+20489654 =811 85
+
++ 46 68872400
+23
+--------- Expected: 08 + 12252 = 063284
+864744 + 510
+
+Iteration: 224000
+--------- Input:  + 771362 
+--------- Output:  771362 2 4411 2287568
+317 79 29 2 13= 3 = = 3339 35 3227262563904966394
+--------- Expected: + 771362 = 6975631
+213375 + 9698
+
+Iteration: 225000
+--------- Input: = 165576
+1
+--------- Output: 165576
+10314136276 = 66539 =7 8 =6 817444460303168546
+2 = 9
+78473579 505
+--------- Expected:  165576
+15961 + 412893 = 458824
+
+
+Iteration: 226000
+--------- Input: 500 = 2870
+--------- Output: 0 = 28702361325595
+0689 = 81
+513388
+5514524 =3 = 07885223 926 + 15566
+38
+--------- Expected: 00 = 287067
+903282 + 177946 = 82
+
+Iteration: 227000
+--------- Input: 7
+56556 + 
+--------- Output: 56556 + 83+8+3432 8
+ 112664= 6+ 2830 =05 + 2 = + 3
+19 14+16878296 67 8+6
+--------- Expected: 
+56556 + 33710 = 66209
+573391 + 
+
+Iteration: 228000
+--------- Input: 
+106048 + 
+--------- Output: 06048 + 0857 6866 4674694078317 + = 103 081
+750 218
+ 63816 7143822027061
+--------- Expected: 106048 + 944204 = 2520501
+869774
+
+Iteration: 229000
+--------- Input: 3 = 682946
+--------- Output: = 682946 91171 =933773914139102 =8= +5
+6646
+ 0
+40248 30 =8145385 == +669
+--------- Expected:  = 682946
+883935 + 944715 = 0568
+
+Iteration: 230000
+--------- Input: 282721
+563
+--------- Output: 2721
+563+6 = 16 5
+4
+ = 7384 6 =9 981 + = 9 + = + =12221
+049282= = =498
+9
+--------- Expected: 82721
+563633 + 481280 = 3194401
+
+
+Iteration: 231000
+--------- Input: 2 = 807038
+--------- Output: = 8070383016043829433144558
+4088
+8496422511
+ 3 + 46506643 + 9 + 9340956 
+--------- Expected:  = 807038
+275355 + 796279 = 4361
+
+Iteration: 232000
+--------- Input: 59
+46230 +
+--------- Output: 
+46230 + = 774061 + 3 3129702 + 2116 = 4 + 5564 7181
+7307 = 11
+549
+425 +
+--------- Expected: 9
+46230 + 64329 = 955011
+93627 +
+
+Iteration: 233000
+--------- Input: = 915693
+9
+--------- Output: 915693
+9242 = = + = 022631199 0 = 522977480853256162463827399013
+3778192
+--------- Expected:  915693
+929278 + 889723 = 100918
+
+Iteration: 234000
+--------- Input: 8500861
+40
+--------- Output: 00861
+401 + 984701095140197728 + + 324251 + = 365773959076
+80746 + 08587
+--------- Expected: 500861
+400032 + 26980 = 210724
+5
+
+Iteration: 235000
+--------- Input: 3374 + 252
+--------- Output: 74 + 2526457 + 0802 = 6
+1248318053191426 + 5442 = 9
+511030 41
+412580
+728
+--------- Expected: 374 + 252052 = 624569
+543327 + 6
+
+Iteration: 236000
+--------- Input: 883 = 7247
+--------- Output: 3 = 7247 = 93 23 675601863 + =11 09861036028 = 61993
+812
+1 29 8 = 061484
+--------- Expected: 83 = 7247921
+670344 + 160162 = 6
+
+Iteration: 237000
+--------- Input: 61 = 65542
+--------- Output:  = 65542+99841987
+ 7 +9 8
+= +6413 1 723 + 4714 013 48655 1
+08  250857263
+--------- Expected: 1 = 6554201
+643270 + 159511 = 18
+
+Iteration: 238000
+--------- Input: = 4166301
+
+--------- Output: 4166301
+4012 314 431 768 0 +151640 + 18 375338238751
+3613163 +486 8 5154
+--------- Expected:  4166301
+93793 + 535928 = 127926
+
+Iteration: 239000
+--------- Input: 74407 = 27
+--------- Output: 407 = 2722851
+94727
+556
+81618= 0 45 +054 +59510699318776707 =80641 + 250
+--------- Expected: 4407 = 2755521
+364973 + 185782 =
+
+Iteration: 240000
+--------- Input: 978721 + 2
+--------- Output: 8721 + 2622 +  50+10 0580 10 2 4206+ 494
+9791
+ 2= 4543487 9 = =11238355 
+--------- Expected: 78721 + 212556 = 7721911
+615017 
+
+Iteration: 241000
+--------- Input: 6578 = 669
+--------- Output: 78 = 6695122= 22890949
+695
+477484004 + 46 8 9795 2115
+945
+019 95 681249 
+--------- Expected: 578 = 669094
+657401 + 12476 = 77
+
+Iteration: 242000
+--------- Input: + 937301 =
+--------- Output: 937301 = = 30400741639080693084+28+ 71776
+ 266842 ++ 6 + 826118903 + 770
+--------- Expected:  937301 = 8112611
+907204 + 72581
+
+Iteration: 243000
+--------- Input:  = 826654
+
+--------- Output:  826654
++ 7483619
+
+656094629999 = 5 3= 885 + 652191
+662 + 1538851
+7 = 73
+--------- Expected: = 826654
+669116 + 866521 = 73653
+
+Iteration: 244000
+--------- Input: + 681962 =
+--------- Output: 681962 =128
+7 2 =6891175 442394041591 +01 
+70 2
+ 1149641 18 43411  641
+ 
+--------- Expected:  681962 = 3640161
+784029 + 50782
+
+Iteration: 245000
+--------- Input: 419126 + 8
+--------- Output: 9126 + 86 15272 3123 13841== ==182  36
+2422  301028207905045292 119 8 10
+--------- Expected: 19126 + 866188 = 4135821
+398971 
+
+Iteration: 246000
+--------- Input:  = 8027121
+--------- Output:  8027121  3394265 =74 +2 +931102891 90 305 = 19  26070 176 =765623831101
+--------- Expected: = 8027121
+276337 + 589541 = 8785
+
+Iteration: 247000
+--------- Input: 183 = 8575
+--------- Output: 3 = 85756+
+=97464737  64 230972721+91 58 =036+6= 491 =0997283115750+  
+1
+--------- Expected: 83 = 8575951
+886503 + 624666 = 9
+
+Iteration: 248000
+--------- Input: 433
+638126
+--------- Output: 3
+6381264  70759+ = =
+ = = =96 =5 277571296
+617556833977576 + 02 4141054
+--------- Expected: 33
+638126 + 818269 = 5936541
+334
+
+Iteration: 249000
+--------- Input: 77622 = 93
+--------- Output: 622 = 9342 +19 
+918133 41 7581155 6910011 6= = 2974 87925 8 +378789
+106 
+--------- Expected: 7622 = 9397441
+21769 + 420370 = 
+
+Iteration: 250000
+--------- Input: = 125054
+8
+--------- Output: 125054
+8006 40595475
+70
+864901125862 + +1458 2 +472
+1
+5 91814217 4429 =8
+--------- Expected:  125054
+87555 + 684580 = 531277
+
+
+Iteration: 251000
+--------- Input: 268138 = 2
+--------- Output: 8138 = 20798=2247 1 26244425 13791
+42742242792 394298 = + 06 48506
+ + +2
+--------- Expected: 68138 = 213717
+977291 + 128436 =
+
+Iteration: 252000
+--------- Input: 95 + 66205
+--------- Output:  + 66205
+5+9445 +
+87 04+31+34852 913 599998 +9097097
+ 9 4782578 + = 325
+
+--------- Expected: 5 + 662052 = 7464731
+267550 + 95
+
+Iteration: 253000
+--------- Input: 5371741
+22
+--------- Output: 71741
+224765683711 06 431922
+75569637703 782911
+953 6+6 1 258
+87623 1615
+--------- Expected: 371741
+224544 + 399650 = 491426
+
+
+Iteration: 254000
+--------- Input: 659 + 5958
+--------- Output: 9 + 5958893 +6  =
+34802115706093704 = 56+ 1195 59 49 30204 8
+1 42 + 5165
+--------- Expected: 59 + 595810 = 9647811
+317326 + 5
+
+Iteration: 255000
+--------- Input: 451 = 3155
+--------- Output: 1 = 315589
+2=33 8 5572 26038546
+901 = 560 1
+03645484280 + = 88 978251194
+--------- Expected: 51 = 3155551
+966977 + 954417 = 4
+
+Iteration: 256000
+--------- Input: 9232751
+13
+--------- Output: 32751
+1383892293935626 = 7+ 883305  =  = 542181
+199 732518058638066 89
+ 
+--------- Expected: 232751
+136734 + 479325 = 950616
+
+
+Iteration: 257000
+--------- Input: 8765
+75249
+--------- Output: 65
+7524994235 6621465= 39 9931
+=+ 1 + 3
+45016
+416227270194950 + 93952862
+--------- Expected: 765
+752497 + 538958 = 5541921
+31
+
+Iteration: 258000
+--------- Input: 342 = 9871
+--------- Output: 2 = 98718 + 597866 25770895+ 795 6886966878
+584727 21
+1 = 1
+923705323019
+--------- Expected: 42 = 9871711
+194256 + 296316 = 2
+
+Iteration: 259000
+--------- Input: 187
+769423
+--------- Output: 7
+76942371268 327656 4121
+= 9 2747475212815224 = + 90888
+68069 = 3518454
+--------- Expected: 87
+769423 + 8131 = 455777
+486144
+
+Iteration: 260000
+--------- Input: 92407
+2547
+--------- Output: 407
+2547329 6
+118 = 1 28 + 2 = 1 5897662203 + 0
+697725840650 9 597988084
+--------- Expected: 2407
+254799 + 385891 = 096046
+30
+
+Iteration: 261000
+--------- Input: 1
+505862 +
+--------- Output: 505862 + 431366404+ 191301993 6185
+31
+511932  589661 + ++71 + = +2954299
+--------- Expected: 
+505862 + 976369 = 1322841
+94916
+
+Iteration: 262000
+--------- Input: = 9529851
+
+--------- Output: 9529851
+811= +3320 20 11 =446 251 701771609973444133641=294791 =32487  +
+--------- Expected:  9529851
+986902 + 73941 = 348060
+
+Iteration: 263000
+--------- Input: 22751
+3637
+--------- Output: 751
+363739+747745   5947661  31035331 26890 81   +40 + = 331  =1096819 7
+--------- Expected: 2751
+363739 + 999583 = 2233631
+5
+
+Iteration: 264000
+--------- Input: 
+787958 + 
+--------- Output: 87958 +  + +
+7 25 +53378= 2431930 =132698742473
+7017813486061661
+ + 0343
+--------- Expected: 787958 + 691671 = 9269741
+290857
+
+Iteration: 265000
+--------- Input: + 901392 =
+--------- Output: 901392 =1 +7759092035 543248151 571876925416 3141 =  + +1
+0377388833 =
+ 
+--------- Expected:  901392 = 0839381
+592109 + 13993
+
+Iteration: 266000
+--------- Input: 
+433054 + 
+--------- Output: 33054 + 13
+6 + +8 5511589753  +5247
+698273175021 3578564 = 0282
+845 8079
+--------- Expected: 433054 + 253521 = 575686
+344336 
+
+Iteration: 267000
+--------- Input: 86823 = 13
+--------- Output: 823 = 1376857815 =+23579202 + =1216 825 8  705=  45654075751 + 5 =43
+777
+--------- Expected: 6823 = 134033
+893455 + 724327 = 
+
+Iteration: 268000
+--------- Input: 181 + 6073
+--------- Output: 1 + 60737540 5707950195+19 72
+ 7745 059 +
+  441 9
+8 26
+759801330611 +096
+--------- Expected: 81 + 607372 = 3552511
+399706 + 7
+
+Iteration: 269000
+--------- Input:  343879
+41
+--------- Output: 43879
+416 +21 = +3 46788676 = 79 
+15
+02491449499285826
+8 89230153 = +188
+--------- Expected: 343879
+414621 + 682772 = 3937901
+
+Iteration: 270000
+--------- Input: 7 + 522859
+--------- Output: + 52285921  971 5  +
+37= 4090939= 99 +099 + 9 17 1055949667+535319 10341
+--------- Expected:  + 522859 = 680886
+81574 + 67876
+
+Iteration: 271000
+--------- Input: 7954 = 845
+--------- Output: 54 = 8450 0419 663741893 62140429 41 716227048 767700 70649 1 275355811 
+--------- Expected: 954 = 8453911
+231772 + 395740 = 
+
+Iteration: 272000
+--------- Input: 12 = 03689
+--------- Output:  = 0368978521958 1 04244 9+ +3515 +22 951 +7738214+
+28871 +4
+5265665219 
+--------- Expected: 2 = 0368901
+597516 + 121392 = 80
+
+Iteration: 273000
+--------- Input: 55 = 89880
+--------- Output:  = 8988055 95=  472675 =4 =87 +9 6791 1431=90+8 =2629=552833 0
+96238
+881
+--------- Expected: 5 = 8988001
+78923 + 138574 = 794
+
+Iteration: 274000
+--------- Input:  626219
+89
+--------- Output: 26219
+89+  2374
+77 54 4+    78307
+1 14+ 52 = 7684=  621344 66 5992282  3
+--------- Expected: 626219
+895734 + 571272 = 6007641
+
+Iteration: 275000
+--------- Input: 251
+113309
+--------- Output: 1
+113309 1 3891 1
+ 33089
+05 79 =823
+011865 9 = 347 + 2318801966741
+61
+ 9
+--------- Expected: 51
+113309 + 342461 = 077554
+8362
+
+Iteration: 276000
+--------- Input:  + 426098 
+--------- Output:  426098 9815 ==9006491399354 ==610538
+68 751
+544 =  39 +29 30 71=+65 809
+--------- Expected: + 426098 = 310329
+574203 + 79974
+
+Iteration: 277000
+--------- Input:  2100941
+4
+--------- Output: 100941
+4 2189462 62693413123  31724844
+805331887 1 8934
+9  1 6
+56534+  7
+--------- Expected: 2100941
+485655 + 61039 = 496645
+
+
+Iteration: 278000
+--------- Input: 36797 = 98
+--------- Output: 797 = 98 1  
+67 7782 1370  6671148929573612588 7756391 67716 026 5601 60
+--------- Expected: 6797 = 9835711
+796758 + 424026 =
+
+Iteration: 279000
+--------- Input: 775 = 9361
+--------- Output: 5 = 93612 6 51282 +4 8
+860432910+16 1083= 361897 4
+9
+678+489327284444235
+--------- Expected: 75 = 936194
+79456 + 376536 = 299
+
+Iteration: 280000
+--------- Input:  309859 = 
+--------- Output: 09859 =  62+144  0394488=8229156==77+  948719 = 442625173140788860378619
+--------- Expected: 309859 = 907284
+402254 + 734588 
+
+Iteration: 281000
+--------- Input:  = 6452001
+--------- Output:  64520015+31978 46 40319+2 5938367 =23=8752156
+025819=3356
+1 =840 +  635
+--------- Expected: = 6452001
+383106 + 380818 = 4293
+
+Iteration: 282000
+--------- Input:  = 9438261
+--------- Output:  943826114 9246735 21959 991679 96
+3 39 87
+42 7067 251857
+47539681
+ 7
+9 
+--------- Expected: = 9438261
+684639 + 264150 = 9878
+
+Iteration: 283000
+--------- Input:  6126701
+4
+--------- Output: 126701
+48858 79758+87
+8878 +29 +9859247019 =003=0 28+16842149043066140
+3
+--------- Expected: 6126701
+466342 + 471076 = 814739
+
+Iteration: 284000
+--------- Input: 00271 = 49
+--------- Output: 271 = 490 = 041
+9 577 5 8843465 =153148=
+565 229751
+4 +6 419659 743462 4
+--------- Expected: 0271 = 4978761
+156825 + 988028 =
+
+Iteration: 285000
+--------- Input: 17216 + 60
+--------- Output: 216 + 6001
+44304=097111119 3 21560 99433860 41
+ 49397885 = 421 0 8681838
+--------- Expected: 7216 + 602718 = 439917
+7146 + 83
+
+Iteration: 286000
+--------- Input: 788 + 5266
+--------- Output: 8 + 52660160190 8633 4=113288 5 + 6
+7
+909107
+783388820383150668943707487
+--------- Expected: 88 + 526661 = 944146
+64602 + 405
+
+Iteration: 287000
+--------- Input: 10 = 11379
+--------- Output:  = 11379435 =12105 =10 0+6205 ==3325848+001249456449589
+49202965 +0158  
+--------- Expected: 0 = 1137941
+934155 + 718365 = 02
+
+Iteration: 288000
+--------- Input: 1
+153240 +
+--------- Output: 153240 +8 =4173=26174 1494= +0 0 56 +2649951788801833312344854
+76 =4983 
+--------- Expected: 
+153240 + 63708 = 849612
+37996 +
+
+Iteration: 289000
+--------- Input: 3468621
+17
+--------- Output: 68621
+17 3 81 32277209 92 =981 9
+7057508336 55 7
+
+ +663813331 11 98 85
+5
+--------- Expected: 468621
+174170 + 631438 = 806508
+
+
+Iteration: 290000
+--------- Input: 35 + 77567
+--------- Output:  + 775679 84 =
+33157 4164730895141770 9  572100798170 929134 +19 6170872
+--------- Expected: 5 + 775673 = 8088431
+695876 + 72
+
+Iteration: 291000
+--------- Input: 1
+339844 +
+--------- Output: 339844 + 13882433684104222= 3 +4883170 + 192228 =5 +2413687155444 7229 =
+--------- Expected: 
+339844 + 153841 = 586394
+878038
+
+Iteration: 292000
+--------- Input:  658984 = 
+--------- Output: 58984 = 2568632470 581191390195 62 =183977 95978 701782343578 1434369330
+--------- Expected: 658984 = 6343841
+651427 + 68439 
+
+Iteration: 293000
+--------- Input: 7 + 908870
+--------- Output: + 908870  85523 082
+69779
+
+7 + 507 61 + 048562621751
+ 591087
+ 1
+98 6574 
+--------- Expected:  + 908870 = 7013141
+477256 + 974
+
+Iteration: 294000
+--------- Input: 17375 + 95
+--------- Output: 375 + 95 220 6 59 =0 1
+9 2672285 648 = + +311
+ + 03898 8 5374909  071565
+--------- Expected: 7375 + 953046 = 1240711
+764496 +
+
+Iteration: 295000
+--------- Input: 7
+937179 +
+--------- Output: 937179 + 79737 711
+776337017669 =0423475= 71458+ 5= 8137 5= =351111104
+2
+--------- Expected: 
+937179 + 658632 = 1185951
+39852
+
+Iteration: 296000
+--------- Input: 2 + 860632
+--------- Output: + 8606321
+930
+3
+77901 71084 3 += 2 + 2
+96165097=5259079 +878
+1
+631801
+6 
+--------- Expected:  + 860632 = 4654401
+313302 + 744
+
+Iteration: 297000
+--------- Input: 85364
+1389
+--------- Output: 364
+1389954078+ 36 =8 +87636 =90936  8  3 + + + 6 5385157 89
+11523 71349
+--------- Expected: 5364
+138932 + 962048 = 0890011
+2
+
+Iteration: 298000
+--------- Input: 96 = 61457
+--------- Output:  = 61457460 57 0 =4+ 4369 = ==81275239008+ 948
+7894 + 63751
+ 
+8809317357
+--------- Expected: 6 = 6145701
+52232 + 776211 = 344
+
+Iteration: 299000
+--------- Input: 27250 = 40
+--------- Output: 250 = 404034 5006017424 47 = 43622421868=20
+0 = +7397927524983455
+4 = + 
+--------- Expected: 7250 = 4068911
+573642 + 726642 =
+
+Iteration: 300000
+--------- Input:  290084
+61
+--------- Output: 90084
+613 + 70481 + 30 0 =22
+357373 634193412368542551184
+61 6146682277 
+--------- Expected: 290084
+613601 + 351600 = 102569
+
+
+Iteration: 301000
+--------- Input: 5304 + 704
+--------- Output: 04 + 7047 048
+ +61
+7 40 036 =9
+7 5 47979167753490 ++ 7 8608=741 825162  
+--------- Expected: 304 + 704527 = 1389951
+338685 + 
+
+Iteration: 302000
+--------- Input:  639348 = 
+--------- Output: 39348 = 2 9 5708349623+ 567 3
+29 +09 + 83885 5359430314 30295 798 = =2 8
+--------- Expected: 639348 = 2376361
+388237 + 663033
+
+Iteration: 303000
+--------- Input: 19011
+6375
+--------- Output: 011
+63753587474=4  =96335 461 9 + 5 51  + 001913498558 =95=443
+528757
+14
+--------- Expected: 9011
+637518 + 538150 = 8665711
+4
+
+Iteration: 304000
+--------- Input:  = 6812011
+--------- Output:  68120111 1 11445939 84760689992
+67 22 86198
+00 45943 2 385094865652623 
+--------- Expected: = 6812011
+714136 + 238470 = 6062
+
+Iteration: 305000
+--------- Input: 08115 + 84
+--------- Output: 115 + 84279114=4471 =78856 = +6948 1 3
+41
+14437 807890+
+0 568+25 11
+4675
+--------- Expected: 8115 + 846374 = 9844531
+448110 +
+
+Iteration: 306000
+--------- Input:  + 553602 
+--------- Output:  553602 +48 043752817726854816141611
+565 679 + 2 247 351 941 65 +7759 68
+--------- Expected: + 553602 = 755218
+736255 + 38593
+
+Iteration: 307000
+--------- Input: 54418 + 15
+--------- Output: 418 + 152 + 721 229 76 =072 488
+7 3 54195841 87 44022 +615=1
+3
+930874531
+--------- Expected: 4418 + 158719 = 731318
+370535 + 
+
+Iteration: 308000
+--------- Input: 3739 + 762
+--------- Output: 39 + 762625017= +985 44816842431791751
+879  83 81164
+47190768+ 3242 + 10
+--------- Expected: 739 + 762734 = 3746131
+433913 + 
+
+Iteration: 309000
+--------- Input: 82 = 51184
+--------- Output:  = 51184 +1 3067 + 509604135209081
+5 =539 01 3525730246396229 929651362 
+--------- Expected: 2 = 5118411
+315804 + 835758 = 26
+
+Iteration: 310000
+--------- Input: 54 + 34336
+--------- Output:  + 34336673915905132868647 949267 6736989 182597440915+7239825523749899 
+--------- Expected: 4 + 343365 = 914439
+933127 + 993
+
+Iteration: 311000
+--------- Input: 514028
+255
+--------- Output: 4028
+2558636642639=2721 783 = +23 43300320 + 487232931 382162 07 6 6247 
+--------- Expected: 14028
+255694 + 508925 = 916467
+2
+
+Iteration: 312000
+--------- Input: 318149 = 0
+--------- Output: 8149 = 075+ 7736133953 447=355824 7993698304 +7+18012
+94+03823703 986845
+--------- Expected: 18149 = 071186
+931423 + 855778 =
+
+Iteration: 313000
+--------- Input: 96009 + 81
+--------- Output: 009 + 81 60641  6736 +267 + 0+ =13981 = 344
+38615990 9 96687005=3
+76 9
+2
+--------- Expected: 6009 + 81672 = 186771
+87652 + 42
+
+Iteration: 314000
+--------- Input: = 137839
+9
+--------- Output: 137839
+901 8 +9 295 32 +706 51 6
+90893120441 8 =7 =83
+ =136
+0
+9 02228593
+--------- Expected:  137839
+922166 + 253562 = 827571
+
+Iteration: 315000
+--------- Input: 1 + 314999
+--------- Output: + 3149996
+1 8393 7623+552
+1 729+
+918370663 + 30 9+21530 =
+29217+ = 0 71 
+--------- Expected:  + 314999 = 032508
+892508 + 9650
 

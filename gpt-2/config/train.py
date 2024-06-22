@@ -32,7 +32,7 @@ from torch.distributed import init_process_group, destroy_process_group
 # default config values designed to train a gpt2 (124M) on OpenWebText
 # I/O
 out_dir = 'out'
-eval_interval = 1000
+eval_interval = 2000
 log_interval = 1
 eval_iters = 200
 eval_only = False # if True, script exits right after the first eval
@@ -53,9 +53,8 @@ n_head = 12
 n_embd = 768
 dropout = 0.0 # for pretraining 0 is good, for finetuning try 0.1+
 bias = False # do we use bias inside LayerNorm and Linear layers?
-name = "gpt-2"
+name = "gpt-2-sa"
 k_regressivity = 1
-meta_vocab_size = None # used to determine vocab size later
 # adamw optimizer
 learning_rate = 6e-4 # max learning rate
 max_iters = 600000 # total number of training iterations
@@ -127,7 +126,7 @@ ctx = nullcontext() if device_type == 'cpu' else torch.amp.autocast(device_type=
 
 # poor man's data loader
 data_dir = os.path.join('data', dataset)
-def get_batch(split, dataset="normal"):
+def get_batch(split):
     # We recreate np.memmap every batch to avoid a memory leak, as per
     # https://stackoverflow.com/questions/45132940/numpy-memmap-memory-usage-want-to-iterate-once/61472122#61472122
     if split == 'train':
@@ -135,22 +134,10 @@ def get_batch(split, dataset="normal"):
     else:
         data = np.memmap(os.path.join(data_dir, 'val.bin'), dtype=np.uint16, mode='r')
 
+    # add k_regressivity for semi-autoregressive transformer model
     ix = torch.randint(len(data) - block_size - (k_regressivity - 1), (batch_size,))
-    match dataset:
-        case "maths":
-            data_text = decode(dataset)
-            examples = data_text.split('\n')
-            examples = examples[:len(examples)-2] # get rid of the partial ones so you only have normal ones
-            problems, answers = [], []
-            for i, example in enumerate(examples):
-                first, second = example.split('=')
-                problems.append(encode(first + "= "))
-                answers.append(second.strip())
-
-        case _:
-            # add k_regressivity for semi-autoregressive transformer model
-            x = torch.stack([torch.from_numpy((data[i:i+block_size]).astype(np.int64)) for i in ix])
-            y = torch.stack([torch.from_numpy((data[i+k_regressivity:i+k_regressivity+block_size]).astype(np.int64)) for i in ix])
+    x = torch.stack([torch.from_numpy((data[i:i+block_size]).astype(np.int64)) for i in ix])
+    y = torch.stack([torch.from_numpy((data[i+k_regressivity:i+k_regressivity+block_size]).astype(np.int64)) for i in ix])
     if device_type == 'cuda':
         # pin arrays x,y, which allows us to move them to GPU asynchronously (non_blocking=True)
         x, y = x.pin_memory().to(device, non_blocking=True), y.pin_memory().to(device, non_blocking=True)
@@ -164,6 +151,7 @@ best_val_loss = 1e9
 
 # attempt to derive vocab_size from the dataset
 meta_path = os.path.join(data_dir, 'meta.pkl')
+meta_vocab_size = None
 if os.path.exists(meta_path):
     with open(meta_path, 'rb') as f:
         meta = pickle.load(f)
@@ -172,105 +160,6 @@ if os.path.exists(meta_path):
 enc = tiktoken.get_encoding("gpt2")
 encode = lambda s: enc.encode(s, allowed_special={"<|endoftext|>"})
 decode = lambda l: enc.decode(l)
-
-class Encoder():
-    def __init__(self):
-        self.eot_token = 13
-        self.max_token_value = 50256
-
-    def encode_ordinary(self, text):
-        value = []
-        for char in text:
-            if char == " ":
-                value.append(10)
-            elif char == "=":
-                value.append(11)
-            elif char == "+":
-                value.append(12)
-            elif char.isnumeric():
-                value.append(int(char))
-            else:
-                raise ValueError(f"Invalid character in text: {char}")
-            
-        return value
-    
-    def decode(self, l):
-        string = ""
-        for i in l:
-            if i == 10:
-                string += " "
-            elif i == 11:
-                string += "="
-            elif i == 12:
-                string += "+"
-            elif i == 13:
-                string += "\n"
-            else:
-                string += str(i)
-        return string
-
-if dataset == "maths":
-    enc = Encoder()
-    encode = lambda s: enc.encode_ordinary(s)
-    decode = lambda l: enc.decode(l)
-
-def evaluate_accuracy():
-    model.eval()
-    def prepare_dataset(split, max_n):
-        print(f"Preparing dataset {split}...")
-        dataset = np.memmap(os.path.join(data_dir, f'{split}.bin'), dtype=np.uint16, mode='r')
-        # randomly sample 200 contiguos text in the dataset
-        dataset = dataset[:block_size]
-        data_text = decode(dataset)
-        examples = data_text.split('\n')
-        examples = examples[:len(examples)-2] # get rid of the partial ones so you only have normal ones
-        problems, answers = [], []
-        for i, example in enumerate(examples):
-            first, second = example.split('=')
-            problems.append(encode(first + "= "))
-            answers.append(second.strip())
-            if i > max_n:
-                break
-
-        # pad all the problems to be same length
-        # max_len = max(len(p) for p in problems)
-        # for i in range(len(problems)):
-        #     problems[i] = problems[i] + [0] * (max_len - len(problems[i]))
-        #     answers[i] = answers[i] + [0] * (max_len - len(answers[i]))
-        x = problems
-        y = answers
-        # x = torch.tensor(problems)
-        # y = torch.tensor(answers)
-        # if device_type == 'cuda':
-        #     # pin arrays x,y, which allows us to move them to GPU asynchronously (non_blocking=True)
-        #     x, y = x.pin_memory().to(device, non_blocking=True), y.pin_memory().to(device, non_blocking=True)
-        # else:
-        #     x, y = x.to(device), y.to(device)
-        return x, y
-    
-    acc = {}
-    for split in ['train', 'val']:
-        train_x, train_y = prepare_dataset('train', 100)
-        total = 0
-        correct = 0
-        for i, (start_ids, answer) in enumerate(zip(train_x, train_y)):
-            with ctx:
-                x = (torch.tensor(start_ids, dtype=torch.long, device=device)[None, ...])
-                if ddp:
-                    train_preds = model.module.generate(x, 60, stop=14) # (100, tokens)
-                else:
-                    train_preds = model.generate(x, 60, stop=14)
-
-            pred_str = decode(train_preds[0].tolist())
-            answer_str = answer
-            if pred_str == answer_str:
-                correct += 1
-        total += 1
-        acc[split] = correct / total
-    model.train()
-    return acc
-
-
 # model init
 if init_from == 'scratch':
     # init a new model from scratch
@@ -396,9 +285,7 @@ while True:
     # evaluate the loss on train/val sets and write checkpoints
     if iter_num % eval_interval == 0 and master_process:
         losses, perplexity = estimate_loss()
-        accuracy = evaluate_accuracy()
         print(f"step {iter_num}: train loss {losses['train']:.4f}, perplexity {perplexity['train']:.4f} val loss {losses['val']:.4f}, perplexity {perplexity['val']:.4f}")
-        print(f"accuracy: {accuracy}")
         if wandb_log:
             wandb.log({
                 "iter": iter_num,
@@ -424,7 +311,7 @@ while True:
                 torch.save(checkpoint, os.path.join(out_dir, 'ckpt.pt'))
         
         # Try to check quality of the produced tokens
-        wanted_input = X[[0], :10]
+        wanted_input = X[[0], :2]
         wanted_output = Y[[0], :block_size//16]
         if ddp:
             generated_output = model.module.generate(wanted_input, 64)

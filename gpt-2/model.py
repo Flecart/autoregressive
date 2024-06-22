@@ -49,7 +49,7 @@ class CausalSelfAttention(nn.Module):
             self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size))
                                         .view(1, 1, config.block_size, config.block_size))
 
-    def forward(self, x):
+    def forward(self, x, attention_mask=None):
         B, T, C = x.size() # batch size, sequence length, embedding dimensionality (n_embd)
 
         # calculate query, key, values for all heads in batch and move head forward to be the batch dim
@@ -61,8 +61,9 @@ class CausalSelfAttention(nn.Module):
         # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
         if self.flash:
             # efficient attention using Flash Attention CUDA kernels
-            y = torch.nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=None, dropout_p=self.dropout if self.training else 0, is_causal=True)
+            y = torch.nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=attention_mask, dropout_p=self.dropout if self.training else 0, is_causal=True)
         else:
+            raise NotImplementedError("Flash Attention requires PyTorch >= 2.0")
             # manual implementation of attention
             att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
             att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
@@ -100,8 +101,8 @@ class Block(nn.Module):
         self.ln_2 = LayerNorm(config.n_embd, bias=config.bias)
         self.mlp = MLP(config)
 
-    def forward(self, x):
-        x = x + self.attn(self.ln_1(x))
+    def forward(self, x, attention_mask=None):
+        x = x + self.attn(self.ln_1(x), attention_mask=attention_mask)
         x = x + self.mlp(self.ln_2(x))
         return x
 
@@ -130,6 +131,11 @@ class GPT(nn.Module):
             h = nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
             ln_f = LayerNorm(config.n_embd, bias=config.bias),
         ))
+
+        print("Number of parameters of a single transformer block:", sum(p.numel() for p in self.transformer.h[0].parameters()))
+        print("Number of wte parameters:", sum(p.numel() for p in self.transformer.wte.parameters()))
+        print("Number of wpe parameters:", sum(p.numel() for p in self.transformer.wpe.parameters()), config.vocab_size, config.n_embd)
+
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
         # with weight tying when using torch.compile() some warnings get generated:
         # "UserWarning: functional_call was passed multiple values for tied weights.
@@ -146,6 +152,20 @@ class GPT(nn.Module):
 
         # report number of parameters
         print("number of parameters: %.2fM" % (self.get_num_params()/1e6,))
+
+    @torch.no_grad
+    def get_perplexity(self, logits, targets):
+        """ Returns perplexity
+
+        Input:
+            logits: Shape: (batch_size, sequence_length, vocab_size)
+            Targets: Shape: (batch_size, sequence_length)
+        
+        """
+        logit_predictions = F.log_softmax(logits, dim=-1)
+        one_hot_targets = F.one_hot(targets, num_classes=self.config.vocab_size).float()
+        perplexity = torch.exp(-torch.sum(logit_predictions * one_hot_targets, dim=-1).mean())
+        return perplexity
 
     def get_num_params(self, non_embedding=True):
         """
@@ -167,7 +187,7 @@ class GPT(nn.Module):
         elif isinstance(module, nn.Embedding):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
-    def forward(self, idx, targets=None):
+    def forward(self, idx, targets=None, attention_mask=None):
         device = idx.device
         b, t = idx.size()
         assert t <= self.config.block_size, f"Cannot forward sequence of length {t}, block size is only {self.config.block_size}"
@@ -178,7 +198,7 @@ class GPT(nn.Module):
         pos_emb = self.transformer.wpe(pos) # position embeddings of shape (t, n_embd)
         x = self.transformer.drop(tok_emb + pos_emb)
         for block in self.transformer.h:
-            x = block(x)
+            x = block(x, attention_mask=attention_mask)
         x = self.transformer.ln_f(x)
 
         if targets is not None:
@@ -187,7 +207,7 @@ class GPT(nn.Module):
             loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
         else:
             # inference-time mini-optimization: only forward the lm_head on the very last position
-            logits = self.lm_head(x[:, [-1], :]) # note: using list [-1] to preserve the time dim
+            logits = self.lm_head(x[:, :, :]) # note: using list [-1] to preserve the time dim
             loss = None
 
         return logits, loss
@@ -302,8 +322,9 @@ class GPT(nn.Module):
         mfu = flops_achieved / flops_promised
         return mfu
 
+    # Old func:
     @torch.no_grad()
-    def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
+    def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None, stop=None):
         """
         Take a conditioning sequence of indices idx (LongTensor of shape (b,t)) and complete
         the sequence max_new_tokens times, feeding the predictions back into the model each time.
@@ -327,4 +348,66 @@ class GPT(nn.Module):
             # append sampled index to the running sequence and continue
             idx = torch.cat((idx, idx_next), dim=1)
 
+            if stop is not None and idx_next.item() == stop:
+                break
+
         return idx
+
+    # @torch.no_grad()
+    # def generate(self, idx, max_new_tokens, pad_token, temperature=1.0, top_k=None, stop_token=None):
+
+    #     """
+    #     Take a conditioning sequence of indices idx (LongTensor of shape (b,t)) and complete
+    #     the sequence max_new_tokens times, feeding the predictions back into the model each time.
+    #     Most likely you'll want to make sure to be in model.eval() mode of operation for this.
+    #     """
+    #     batch_size, seq_len = idx.size()
+    #     stopped = torch.zeros(batch_size, dtype=torch.bool, device=idx.device)
+
+    #     for _ in range(max_new_tokens):
+    #         # if the sequence context is growing too long we must crop it at block_size
+    #         idx_cond = idx if idx.size(1) <= self.config.block_size else idx[:, -self.config.block_size:]
+            
+    #         # Create attention mask to ignore pad tokens
+    #         attention_mask = (idx_cond != pad_token).long()
+            
+    #         # forward the model to get the logits for the index in the sequence
+    #         logits, _ = self(idx_cond, attention_mask=attention_mask)
+            
+    #         # pluck the logits at the final step and scale by desired temperature
+    #         logits = logits[:, -1, :] / temperature
+            
+    #         # optionally crop the logits to only the top k options
+    #         if top_k is not None:
+    #             v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
+    #             logits[logits < v[:, [-1]]] = -float('Inf')
+            
+    #         # apply softmax to convert logits to (normalized) probabilities
+    #         probs = F.softmax(logits, dim=-1)
+            
+    #         # sample from the distribution
+    #         idx_next = torch.multinomial(probs, num_samples=1)
+            
+    #         # Mask out already stopped sequences and handle padding
+    #         idx_next = torch.where(stopped.unsqueeze(1), torch.full_like(idx_next, stop_token), idx_next)
+            
+    #         # append sampled index to the running sequence and continue
+    #         idx = torch.cat((idx, idx_next), dim=1)
+            
+    #         if stop_token is not None:
+    #             # Check for stop token in each sequence and update stopped status
+    #             stopped |= (idx_next.squeeze() == stop_token)
+
+    #             # If all sequences are stopped, break early
+    #             if stopped.all():
+    #                 break
+
+    #     # Remove padding for the output sequences
+    #     output = []
+    #     for i in range(batch_size):
+    #         seq = idx[i].tolist()
+    #         if stop_token is not None and stop_token in seq:
+    #             seq = seq[:seq.index(stop_token) + 1]
+    #         output.append(seq)
+
+    #     return output
