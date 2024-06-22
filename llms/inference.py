@@ -21,7 +21,7 @@ model.load_state_dict(torch.load("llms/out/best_model.pt"))
 model.eval()
 
 # Sample input text
-input_text = "1 + 1 = "
+input_text = "1234 + 14 = "
 
 # Convert input text to token IDs using the tokenizer
 # This step depends on the tokenizer you're using
@@ -33,16 +33,11 @@ input_tensor = torch.tensor([token_ids], dtype=torch.long)
 
 # Perform inference
 with torch.no_grad():
-    logits = model.generate(input_tensor)
+    generated = model.generate(input_tensor)
 
-print(logits)
-# Convert logits to probabilities
-probabilities = torch.softmax(logits, dim=-1)
 
-# Get the predicted token ID(s) for each position
-predicted_token_ids = torch.argmax(probabilities, dim=-1)
-
+print(generated, generated.size())
 # Convert predicted token IDs back to text
-predicted_text = tokenizer.decode(predicted_token_ids[0].tolist())
+predicted_text = tokenizer.decode(generated[0].tolist())
 
 print(predicted_text)

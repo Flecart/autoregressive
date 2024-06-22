@@ -11,6 +11,7 @@ from .model import SimpleDecoderTransformer
 from .dataset import MathsDataset
 from time import time
 import os
+from .dataset import Tokenizer
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 
@@ -34,25 +35,18 @@ gradient_accumulation_steps = 4
 
 # Instantiate the model
 model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer)
-
+model = torch.compile(model)
+model = model.to('cuda:0')
 # If multiple GPUs are available, wrap model with nn.DataParallel
 # if torch.cuda.device_count() > 1:
 #     print("Let's use", torch.cuda.device_count(), "GPUs!")
 #     model = nn.DataParallel(model, device_ids=[0, 1], output_device=0, dim=0)
-
-model = model.to('cuda:0')
+# Print number of parameters of th emodel
+print(f"Number of parameters: {sum(p.numel() for p in model.parameters())}")
 
 # Define the loss function and optimizer
 loss_fn = nn.CrossEntropyLoss(reduction='none')
 optimizer = optim.Adam(model.parameters())
-
-# def collate_fn(batch):
-#     inputs, targets, mask = zip(*batch)
-#     # Pad sequences with 0s to the right
-#     inputs = pad_sequence(inputs, batch_first=True, padding_value=0)
-#     targets = pad_sequence(targets, batch_first=True, padding_value=0)
-#     mask = pad_sequence(mask, batch_first=True, padding_value=0)
-#     return inputs, targets, mask
 
 # When creating the DataLoader, pass the collate_fn
 train_dataset = MathsDataset("llms/data/train.bin")
@@ -92,6 +86,19 @@ for epoch in range(num_epochs):
     for batch in train_dataloader:
         # Get input and target sequences from batch
         input_seq, target_seq, mask = batch
+
+        # Debug prints here
+        # numpy_input = input_seq.numpy()
+        # tokenizer = Tokenizer()
+        # print(tokenizer.decode(numpy_input[0]))
+        # mask_input = mask.numpy()
+        # for x in mask_input[0]:
+        #     print(x, end="")
+        # print()
+        # numpy_target = target_seq.numpy()
+        # print(tokenizer.decode(numpy_target[0]))
+        # asdfasdf
+
         input_seq = input_seq.to('cuda:0')
         target_seq = target_seq.to('cuda:0')
         mask = mask.to('cuda:0')
