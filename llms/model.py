@@ -24,6 +24,17 @@ class SimpleDecoderTransformer(nn.Module):
         
         return self.fc_out(x)
 
+    def generate(self, x, max_len=100, stop_token=13):
+        for _ in range(max_len):
+            output = self.forward(x)
+            output = torch.argmax(output, dim=-1)
+            x = torch.cat([x, output[:, -1].unsqueeze(-1)], dim=-1)
+            
+            if output[0, -1] == stop_token:
+                break
+        
+        return output
+
 # Model parameters
 # vocab_size = 14
 # block_size = 512

@@ -7,6 +7,7 @@ import numpy as np
 import tiktoken
 from pydantic import BaseModel
 from datasets import DatasetDict, Dataset
+import torch
 
 class Operation(BaseModel):
     operand1: int
@@ -36,32 +37,56 @@ num_proc_load_dataset = num_proc
 class MathsDataset(Dataset):
     def __init__(self, filepath: str):
         self.__tokenizer = Tokenizer()
-        # small so we can load it all into memory
-        data = np.memmap(filepath, dtype=np.uint16, mode='r')
+        # too slow to load the whole dataset
+        self.data_source = np.memmap(filepath, dtype=np.uint16, mode='r')
         
-        values = self.__tokenizer.decode(data)
-        samples = values.split("\n")
-        # Now we can create the dataset
+        # values = self.__tokenizer.decode(data)
+        # samples = values.split("\n")
+        # # Now we can create the dataset
 
-        self.data = [self.__tokenizer.encode_ordinary(sample) for sample in samples]
-        self.masks = []
-        for sample in samples:
-            # index of the string '=' in the sample
-            index = sample.index("=")
-            mask = np.zeros(len(sample))
-            mask[index + 2:] = 1
-            self.masks.append(mask)
+        # self.data = [self.__tokenizer.encode(sample) for sample in samples]
+        # self.masks = []
+        # for sample in samples:
+        #     # index of the string '=' in the sample
+        #     index = sample.index("=")
+        #     mask = np.zeros(len(sample))
+        #     mask[index + 2:] = 1
+        #     self.masks.append(mask)
 
     def __len__(self):
-        return len(self.data)
-    
-    def __getitem__(self, idx):
-        sample = self.data[idx]
-        mask = self.masks[idx]
+        return 990_000 # from the generation, should be change to
+        # return len(self.data)
 
-        input_seq = sample
-        target_seq = sample[1:] + [self.__tokenizer.eot_token]
+    def __getitems__(self, idx: list[int]):
+        """ idx: list of indices to retrieve from the dataset
+        """
+        # print(type(idx), idx)
+        pad_starts = np.array(idx) * dataset_padding
+        samples = torch.stack([torch.from_numpy((self.data_source[pad_start : pad_start + dataset_padding]).astype(np.int64)) for pad_start in pad_starts])
+        mask = torch.ones((len(idx), dataset_padding), dtype=torch.int64)
 
+        for i, sample in enumerate(samples):
+            # https://stackoverflow.com/questions/47863001/how-pytorch-tensor-get-the-index-of-specific-value
+            index_of_eot = (sample == self.__tokenizer.eot_token).nonzero(as_tuple=True)[0]
+            index_of_eq = (sample == 11).nonzero(as_tuple=True)[0]
+            mask[i, :index_of_eq + 2] = 0
+            mask[i, index_of_eot + 1:] = 0
+
+            # Examle of the output:
+            # Example: 683886 + 420998 = 4884011X0000
+            # Example: 000000000000000000111111110000
+            # Example: 406146 + 66478 = 426274X000000
+            # Example: 000000000000000001111111000000
+            # print("Example:", self.__tokenizer.decode(sample.numpy()))
+            # numpy_mask = mask[i].numpy()
+            # print("Example: ", end="")
+            # for j, mask_val in enumerate(numpy_mask):
+            #     print(int(mask_val), end="")
+            # print()
+
+        input_seq = samples[:, :-1]
+        target_seq = samples[:, 1:]
+        mask = mask[:, 1:]
         return input_seq, target_seq, mask
 
     def get_string(self, idx):
@@ -72,7 +97,7 @@ class Tokenizer():
         self.eot_token = 13
         self.max_token_value = 13
 
-    def encode_ordinary(self, text):
+    def encode(self, text):
         value = []
         for char in text:
             if char == " ":
@@ -97,9 +122,11 @@ class Tokenizer():
             elif i == 12:
                 string += "+"
             elif i == 13:
-                string += "\n"
-            else:
+                string += "X"
+            elif i < 10:
                 string += str(i)
+            else:
+                raise ValueError(f"Invalid token in list: {i}")
         return string
 
 enc = Tokenizer()
@@ -142,11 +169,12 @@ if __name__ == '__main__':
 
     # we now want to tokenize the dataset. first define the encoding function (gpt2 bpe)
     def process(example):
-        ids = enc.encode_ordinary(example['text']) # encode_ordinary ignores any special tokens
+        ids = enc.encode(example['text']) # encode ignores any special tokens
         ids.append(enc.eot_token) # add the end of text token, e.g. 50256 for gpt2 bpe
         # note: I think eot should be prepended not appended... hmm. it's called "eot" though...
         # pad ids to 30, because it's easier to retrive in this way
         ids = ids + [0] * (dataset_padding - len(ids))
+        assert(len(ids) == dataset_padding), f"len(ids) = {len(ids)}"
         out = {'ids': ids, 'len': len(ids)}
         return out
 
