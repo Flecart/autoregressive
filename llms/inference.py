@@ -33,16 +33,17 @@ input_tensor = torch.tensor([token_ids], dtype=torch.long)
 
 # Perform inference
 with torch.no_grad():
-    logits = model.generate(input_tensor)
+    generated = model.generate(input_tensor)
 
-print(logits)
+# print(logits)
 # Convert logits to probabilities
-probabilities = torch.softmax(logits, dim=-1)
+# probabilities = torch.softmax(logits, dim=-1)
 
 # Get the predicted token ID(s) for each position
-predicted_token_ids = torch.argmax(probabilities, dim=-1)
+# predicted_token_ids = torch.argmax(probabilities, dim=-1)
 
 # Convert predicted token IDs back to text
-predicted_text = tokenizer.decode(predicted_token_ids[0].tolist())
+print(generated.size(), "size")
+predicted_text = tokenizer.decode(generated[0].tolist())
 
 print(predicted_text)

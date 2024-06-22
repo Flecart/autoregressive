@@ -19,6 +19,8 @@ wandb = "^0.16.6"
 mathematics-dataset = "^1.0.1"
 sympy = "^1.12.1"
 pydantic = "^2.7.4"
+lightning = "^2.3.0"
+pyyaml = "^6.0.1"
 
 
 [build-system]

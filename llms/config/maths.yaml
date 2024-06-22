@@ -1,0 +1,10 @@
+architecture:
+  vocab_size: 14
+  block_size: 512
+  emb_size: 512
+  n_layers: 6
+  n_heads: 8
+training:
+  batch: 1024
+  learning_rate: 0.0001
+  epochs: 100
