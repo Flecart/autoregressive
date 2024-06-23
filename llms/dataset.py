@@ -8,14 +8,15 @@ import tiktoken
 from pydantic import BaseModel
 from datasets import DatasetDict, Dataset
 import torch
-
+from argparse import ArgumentParser
+from .tokenizer import Tokenizer
 class Operation(BaseModel):
     operand1: int
     operand2: int
     operator: str = "+"
 
     def __str__(self):
-        return f"{self.operand1} {self.operator} {self.operand2} = {self.call()[::-1]}" # we reverse it bc probably easier.
+        return f"{self.operand1[::-1]}{self.operator}{self.operand2[::-1]}={self.call()[::-1]}" # we reverse it bc probably easier.
     
     def call(self):
         return str(eval(f"{self.operand1} {self.operator} {self.operand2}"))
@@ -24,9 +25,9 @@ class Operation(BaseModel):
 
 # number of workers in .map() call
 # good number to use is ~order number of cpu cores // 2
-num_proc = 20
+num_proc = 80
 
-dataset_padding = 30
+dataset_padding = 65
 # number of workers in load_dataset() call
 # best number might be different from num_proc above as it also depends on NW speed.
 # it is better than 1 usually though
@@ -34,8 +35,20 @@ num_proc_load_dataset = num_proc
 
 # enc = tiktoken.get_encoding("gpt2")
 
+# generation parameters
+number_of_operations = 20_000_000
+max_number_size = int(1e20) # 20 characters
+test_split_size = 0.01
+
 class MathsDataset(Dataset):
-    def __init__(self, filepath: str):
+    def __init__(self, split: str = None):
+        if split == "train":
+            filepath = os.path.join(os.path.dirname(__file__), "data", "train.bin")
+        elif split == "val":
+            filepath = os.path.join(os.path.dirname(__file__), "data", "val.bin")
+        else:
+            raise ValueError(f"Invalid split: {split}")
+        self._split = split
         self.__tokenizer = Tokenizer()
         # too slow to load the whole dataset
         self.data_source = np.memmap(filepath, dtype=np.uint16, mode='r')
@@ -54,7 +67,10 @@ class MathsDataset(Dataset):
         #     self.masks.append(mask)
 
     def __len__(self):
-        return 990_000 # from the generation, should be change to
+        if self._split == "train":
+            return (number_of_operations // 100) * int(100 - test_split_size * 100)
+        elif self._split == "val":
+            return (number_of_operations // 100) * int(test_split_size * 100)
         # return len(self.data)
 
     def __getitems__(self, idx: list[int]):
@@ -67,22 +83,12 @@ class MathsDataset(Dataset):
 
         for i, sample in enumerate(samples):
             # https://stackoverflow.com/questions/47863001/how-pytorch-tensor-get-the-index-of-specific-value
-            index_of_eot = (sample == self.__tokenizer.eot_token).nonzero(as_tuple=True)[0]
-            index_of_eq = (sample == 11).nonzero(as_tuple=True)[0]
-            mask[i, :index_of_eq + 2] = 0
+            eos_token = self.__tokenizer.vocab[self.__tokenizer.eos_token]
+            equal_token = self.__tokenizer.vocab["="]
+            index_of_eot = (sample == eos_token).nonzero(as_tuple=True)[0]
+            index_of_eq = (sample == equal_token).nonzero(as_tuple=True)[0]
+            mask[i, :index_of_eq + 1] = 0
             mask[i, index_of_eot + 1:] = 0
-
-            # Examle of the output:
-            # Example: 683886 + 420998 = 4884011X0000
-            # Example: 000000000000000000111111110000
-            # Example: 406146 + 66478 = 426274X000000
-            # Example: 000000000000000001111111000000
-            # print("Example:", self.__tokenizer.decode(sample.numpy()))
-            # numpy_mask = mask[i].numpy()
-            # print("Example: ", end="")
-            # for j, mask_val in enumerate(numpy_mask):
-            #     print(int(mask_val), end="")
-            # print()
 
         input_seq = samples[:, :-1]
         target_seq = samples[:, 1:]
@@ -90,95 +96,41 @@ class MathsDataset(Dataset):
         return input_seq, target_seq, mask
 
     def get_string(self, idx):
-        return self.__tokenizer.decode(self.data[idx])
+        input_seq, target_seq, mask = self.__getitems__([idx])
+        return self.__tokenizer.decode(input_seq[0].numpy())
 
-class Tokenizer():
-    def __init__(self):
-        self.eot_token = 13
-        self.max_token_value = 13
+def exploration():
+    dataset = MathsDataset("train")
+    for i in range(10):
+        print(dataset.get_string(i))
 
-    def encode(self, text):
-        value = []
-        for char in text:
-            if char == " ":
-                value.append(10)
-            elif char == "=":
-                value.append(11)
-            elif char == "+":
-                value.append(12)
-            elif char.isnumeric():
-                value.append(int(char))
-            else:
-                raise ValueError(f"Invalid character in text: {char}")
-        return value
-            
-    def decode(self, l):
-        string = ""
-        for i in l:
-            if i == 10:
-                string += " "
-            elif i == 11:
-                string += "="
-            elif i == 12:
-                string += "+"
-            elif i == 13:
-                string += "X"
-            elif i < 10:
-                string += str(i)
-            else:
-                raise ValueError(f"Invalid token in list: {i}")
-        return string
+# we now want to tokenize the dataset. first define the encoding function (gpt2 bpe)
+def process(example):
+    ids = enc.encode(example['text']) # encode ignores any special tokens
+    ids = [enc.vocab[enc.bos_token]] + ids
+    ids.append(enc.vocab[enc.eos_token]) # add the end of text token, e.g. 50256 for gpt2 bpe
+    # note: I think eot should be prepended not appended... hmm. it's called "eot" though...
+    # pad ids to 30, because it's easier to retrive in this way
+    ids = ids + [enc.vocab[enc.pad_token]] * (dataset_padding - len(ids))
+    assert(len(ids) == dataset_padding), f"len(ids) = {len(ids)}"
+    out = {'ids': ids, 'len': len(ids)}
+    return out
 
-enc = Tokenizer()
-if __name__ == '__main__':
+def tokenize_dataset():
+    filename = os.path.join(os.path.dirname(__file__), "data", "+_n_20_m_20_examples_20000000.txt")
+    # dataset = Dataset.from_file(filename)
+    def yield_lines():
+        with open(filename, 'r') as f:
+            for line in f:
+                yield {"text": line.strip()}
 
-    number_of_operations = 1000000
-    max_number_size = 1000000
-    test_split_size = 0.01
-    np.random.seed(42)
-
-    operations = []
-    def gen():
-        for _ in range(number_of_operations):
-            op = Operation(
-                operand1=np.random.randint(max_number_size),
-                operand2=np.random.randint(max_number_size),
-                operator=np.random.choice(["+"]), # , "-", "*", "/"
-            )
-
-            yield {"text": str(op)}
-    dataset = Dataset.from_generator(gen, num_proc=num_proc_load_dataset)
+    dataset = Dataset.from_generator(yield_lines, num_proc=num_proc_load_dataset)
     split_dataset = dataset.train_test_split(test_size=test_split_size)
 
-    # takes 54GB in huggingface .cache dir, about 8M documents (8,013,769)
-    # owt by default only contains the 'train' split, so create a test split
     split_dataset['val'] = split_dataset.pop('test') # rename the test split to val
+    process_split_dataset(split_dataset)
 
-    # this results in:
-    # >>> split_dataset
-    # DatasetDict({
-    #     train: Dataset({
-    #         features: ['text'],
-    #         num_rows: 8009762
-    #     })
-    #     val: Dataset({
-    #         features: ['text'],
-    #         num_rows: 4007
-    #     })
-    # })
-
-    # we now want to tokenize the dataset. first define the encoding function (gpt2 bpe)
-    def process(example):
-        ids = enc.encode(example['text']) # encode ignores any special tokens
-        ids.append(enc.eot_token) # add the end of text token, e.g. 50256 for gpt2 bpe
-        # note: I think eot should be prepended not appended... hmm. it's called "eot" though...
-        # pad ids to 30, because it's easier to retrive in this way
-        ids = ids + [0] * (dataset_padding - len(ids))
-        assert(len(ids) == dataset_padding), f"len(ids) = {len(ids)}"
-        out = {'ids': ids, 'len': len(ids)}
-        return out
-
-    # tokenize the dataset
+def process_split_dataset(split_dataset: DatasetDict):
     tokenized = split_dataset.map(
         process,
         remove_columns=['text'],
@@ -191,7 +143,7 @@ if __name__ == '__main__':
         filename = os.path.join(os.path.dirname(__file__), "data", f'{split}.bin')
         dtype = np.uint16 # (can do since enc.max_token_value == 50256 is < 2**16)
         arr = np.memmap(filename, dtype=dtype, mode='w+', shape=(arr_len,))
-        total_batches = 1024
+        total_batches = min(1024, len(dset))
 
         idx = 0
         for batch_idx in tqdm(range(total_batches), desc=f'writing {filename}'):
@@ -203,10 +155,50 @@ if __name__ == '__main__':
             idx += len(arr_batch)
         arr.flush()
 
-    # this was for the original data
-    # train.bin is ~17GB, val.bin ~8.5MB
-    # train has ~9B tokens (9,035,582,198)
-    # val has ~4M tokens (4,434,897)
+def generate_dataset():
+    # generate the dataset
 
-    # to read the bin files later, e.g. with numpy:
-    # m = np.memmap('train.bin', dtype=np.uint16, mode='r')
+    np.random.seed(42)
+
+    def generate_sum(): # generates the sum dataset
+        for _ in range(number_of_operations):
+            op = Operation(
+                operand1=np.random.randint(max_number_size),
+                operand2=np.random.randint(max_number_size),
+                operator=np.random.choice(["+"]), # , "-", "*", "/"
+            )
+
+            yield {"text": str(op)}
+
+    def digit_addition():
+        for _ in range(number_of_operations):
+            number = np.random.randint(max_number_size)
+            # sum the digits of the number
+            result = sum([int(digit) for digit in str(number)])
+
+            # left pad the number to be 14 characters long
+            # number = str(number).zfill(14)
+            yield {"text": f"{number} = {result}"}
+    dataset = Dataset.from_generator(generate_sum, num_proc=num_proc_load_dataset)
+    split_dataset = dataset.train_test_split(test_size=test_split_size)
+
+    split_dataset['val'] = split_dataset.pop('test') # rename the test split to val
+    process_split_dataset(split_dataset)
+
+enc = Tokenizer()
+if __name__ == '__main__':
+
+    # init argparse with a flag to choose between programs
+    parser = ArgumentParser()
+    parser.add_argument("--program", type=str, default="dataset", help="Choose between 'dataset' and 'exploration'")
+    args = parser.parse_args()
+
+    if args.program == "exploration":
+        exploration()
+    elif args.program == "tokenize":
+        tokenize_dataset()
+        # tokenize the + dataset by arith boys
+    elif args.program == "dataset": # bad style but it works.
+        generate_dataset()
+    else:
+        raise ValueError(f"Invalid program: {args.program}")

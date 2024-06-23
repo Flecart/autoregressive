@@ -14,26 +14,31 @@ import os
 from .dataset import Tokenizer
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
-
+from torch.optim.lr_scheduler import LambdaLR
+import math
 torch.set_float32_matmul_precision('high')
 
 # Initialize wandb
 use_wandb = False
-if use_wandb:
-    wandb.init(project='owt', name='small-gpt-maths-v2')
 
 # Model parameters
-vocab_size = 14
+tokenizer = Tokenizer()
+vocab_size = tokenizer.vocab_size
 block_size = 512
 n_embd = 128
 n_head = 8
 n_layer = 6
 
 # Training parameters
-num_epochs = 10
-batch_size = 512
+num_epochs = 100
+batch_size = 2048
+# steps = 990_000 / 2048 * 600 = ~293750
+lr_decay_iters = 100_000
 num_workers = 20
 gradient_accumulation_steps = 4 # not used
+warmup_steps = 1000
+learning_rate = 6e-4 # max learning rate
+min_lr = 6e-5
 
 # Instantiate the model
 model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer)
@@ -45,13 +50,30 @@ model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer
 # Print number of parameters of th emodel
 print(f"Number of parameters: {sum(p.numel() for p in model.parameters())}")
 
+# Define a lambda function for the warmup
+def lr_lambda(it: int):
+    # 1) linear warmup for warmup_iters steps
+    if it < warmup_steps:
+        return learning_rate * it / warmup_steps
+    # 2) if it > lr_decay_iters, return min learning rate
+    if it > lr_decay_iters:
+        return min_lr
+    # 3) in between, use cosine decay down to min learning rate
+    decay_ratio = (it - warmup_steps) / (lr_decay_iters - warmup_steps)
+    assert 0 <= decay_ratio <= 1
+    coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio)) # coeff ranges 0..1
+    return min_lr + coeff * (learning_rate - min_lr)
+
 # Define the loss function and optimizer
 loss_fn = nn.CrossEntropyLoss(reduction='none')
 optimizer = optim.Adam(model.parameters())
+scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
 
 # When creating the DataLoader, pass the collate_fn
-train_dataset = MathsDataset("llms/data/train.bin")
+train_dataset = MathsDataset("train")
 train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=False)
+val_dataset = MathsDataset("val")
+val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=False)
 
 steps = 0
 
@@ -88,6 +110,17 @@ else:
         device = "cpu"
 
 
+if use_wandb and master_process:
+    wandb.init(project='owt', name='small-gpt-maths-v2')
+# TODO list:
+# - make evaluation on val in the training loop (this is the downstream task)
+# - add perplexity
+# - train and train.
+
+
+# Instantiate the scheduler
+scheduler = LambdaLR(optimizer, lr_lambda)
+
 # add tqdm for steps in epoch
 pbar = tqdm(total=num_epochs*len(train_dataloader))
 
@@ -99,7 +132,6 @@ for epoch in range(num_epochs):
 
         # Debug prints here
         # numpy_input = input_seq.numpy()
-        # tokenizer = Tokenizer()
         # print(tokenizer.decode(numpy_input[0]))
         # mask_input = mask.numpy()
         # for x in mask_input[0]:
@@ -107,6 +139,7 @@ for epoch in range(num_epochs):
         # print()
         # numpy_target = target_seq.numpy()
         # print(tokenizer.decode(numpy_target[0]))
+        # print(input_seq.size())
         # asdfasdf
 
         input_seq = input_seq.to(device)
@@ -127,30 +160,43 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        scheduler.step()
+
+
+        if steps % 100 == 0 and master_process:
+            val_batch = val_dataloader[0]
+            inputs, targets = val_batch
+            outputs = model(inputs)
+            loss_all = loss_fn(output.view(-1, vocab_size), target_seq.view(-1)) * mask.view(-1)
+            val_loss = loss_all.mean()
 
         # Log metrics to wandb
         if use_wandb and master_process:
-            wandb.log({"loss": loss.item()})
+            wandb.log({"loss": loss.item(), "val_loss": val_loss.item(), "learning_rate": optimizer.param_groups[0]['lr']})
 
         # Print loss every 100 steps
         steps += 1
 
-        if steps % 100 == 0 and master_process:
-            print(f'Step [{steps}], Loss: {loss.item()}')
+        if steps % 20 == 0 and master_process:
+            print(f'Step [{steps}], Loss: {loss.item()}, LR: {optimizer.param_groups[0]["lr"]}')
             # Keep track of best model
             if epoch == 0 or loss.item() < best_loss:
                 best_loss = loss.item()
                 torch.save(model.state_dict(), 'llms/out/best_model.pt')
 
-        if steps % 2000 == 0 and master_process:
+
+        if steps % 4000 == 0 and master_process:
             torch.save(model.state_dict(), f'llms/out/model_{steps}.pt')
 
+        # print the loss in the pbar
+        pbar.set_description(f'Loss: {loss.item()}')
         pbar.update(1)
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item()}')
 
 
-if use_wandb:
+if use_wandb and master_process:
     wandb.finish()
 
 if ddp:
     destroy_process_group()
+
