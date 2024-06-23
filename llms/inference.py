@@ -1,22 +1,26 @@
 import torch
 from .model import SimpleDecoderTransformer
 from .dataset import Tokenizer
+from . import karpathy
 
 # Assuming the tokenizer and the model's state_dict are already loaded
+tokenizer = Tokenizer()
 
 # Model parameters
-vocab_size = 14
+vocab_size = tokenizer.vocab_size
 block_size = 512
 n_embd = 128
 n_head = 8
 n_layer = 6
+config = karpathy.GPTConfig(vocab_size=vocab_size, block_size=block_size, n_layer=n_layer, n_head=n_head, n_embd=n_embd)
 
 # Instantiate the model
-model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer)
+# model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer)
+model = karpathy.GPT(config)
 
 # inspect the state dict
 weights = torch.load("llms/out/best_model.pt")
-unwanted_prefix = 'module._orig_mod.'
+unwanted_prefix = '_orig_mod.'
 for k,v in list(weights.items()):
     if k.startswith(unwanted_prefix):
         weights[k[len(unwanted_prefix):]] = weights.pop(k)
@@ -30,12 +34,13 @@ model.load_state_dict(weights)
 model.eval()
 
 # Sample input text
-input_text = "41534 = "
+input_text = "7414487100717341052+2273996284028="
 
 # Convert input text to token IDs using the tokenizer
 # This step depends on the tokenizer you're using
-tokenizer = Tokenizer()
 token_ids = tokenizer.encode(input_text)
+# add bos to beginning
+token_ids = [tokenizer.bos_token_id] + token_ids
 
 # Convert token IDs to PyTorch tensor and add batch dimension
 input_tensor = torch.tensor([token_ids], dtype=torch.long)

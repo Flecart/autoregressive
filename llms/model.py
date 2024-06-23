@@ -1,8 +1,11 @@
+import inspect
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from .tokenizer import Tokenizer
 import random
+import math
+import torch.nn.functional as F
 tokenizer = Tokenizer()
 
 """Implementation of abacus embeddings"""
@@ -75,8 +78,8 @@ class SimpleDecoderTransformer(nn.Module):
     def __init__(self, vocab_size, block_size, n_embd, n_head, n_layer):
         super(SimpleDecoderTransformer, self).__init__()
         self.embed = nn.Embedding(vocab_size, n_embd)
-        # self.pos_embed = nn.Embedding(block_size, n_embd)
-        self.pos_embed = Abacus(n_embd)
+        self.pos_embed = nn.Embedding(block_size, n_embd)
+        # self.pos_embed = Abacus(n_embd)
         self.layers: list[nn.TransformerDecoderLayer] = nn.ModuleList([
             nn.TransformerDecoderLayer(d_model=n_embd, nhead=n_head, dim_feedforward=4*n_embd,  norm_first=True) for _ in range(n_layer)
         ])
@@ -84,6 +87,10 @@ class SimpleDecoderTransformer(nn.Module):
         self.fc_out = nn.Linear(n_embd, vocab_size)
 
         self.apply(self._init_weights)
+        for pn, p in self.named_parameters():
+            if pn.endswith('c_proj.weight'):
+                torch.nn.init.normal_(p, mean=0.0, std=0.02/math.sqrt(2 * n_layer))
+
 
     def _init_weights(self, module):
         if isinstance(module, nn.Linear):
@@ -93,12 +100,26 @@ class SimpleDecoderTransformer(nn.Module):
         elif isinstance(module, nn.Embedding):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
+    @torch.no_grad
+    def get_perplexity(self, logits, targets):
+        """ Returns perplexity
+
+        Input:
+            logits: Shape: (batch_size, sequence_length, vocab_size)
+            Targets: Shape: (batch_size, sequence_length)
+        
+        """
+        logit_predictions = F.log_softmax(logits, dim=-1)
+        one_hot_targets = F.one_hot(targets, num_classes=self.config.vocab_size).float()
+        perplexity = torch.exp(-torch.sum(logit_predictions * one_hot_targets, dim=-1).mean())
+        return perplexity
+
     def forward(self, x):
         seq_length = x.size(1)
-        # positions = torch.arange(0, seq_length).unsqueeze(0).to(x.device)
+        positions = torch.arange(0, seq_length).unsqueeze(0).to(x.device)
         
-        # x = self.embed(x) + self.pos_embed(positions)
-        x = self.embed(x) + self.pos_embed(x)
+        x = self.embed(x) + self.pos_embed(positions)
+        # x = self.embed(x) + self.pos_embed(x)
         
         # memory_mask = torch.ones(x.size(0), x.size(0), dtype=torch.bool).to(x.device)
         causal_attention_mask = torch.triu(torch.ones(seq_length, seq_length, dtype=torch.bool), diagonal=1).to(x.device)
@@ -119,7 +140,10 @@ class SimpleDecoderTransformer(nn.Module):
         output = torch.argmax(output, dim=-1)
         return output
 
-    def generate(self, x, max_len=10, stop_token=13):
+    @torch.no_grad
+    def generate(self, x, max_len=10, stop_token=tokenizer.eos_token_id):
+        # prepad with bos
+        x = torch.cat([torch.tensor([[tokenizer.bos_token_id]]).to(x.device), x], dim=-1)
         for _ in range(max_len):
             output = self.forward(x)
             output = torch.softmax(output, dim=-1)
@@ -131,6 +155,33 @@ class SimpleDecoderTransformer(nn.Module):
                 break
         
         return x
+
+
+    def configure_optimizers(self, weight_decay, learning_rate, betas, device_type):
+        # start with all of the candidate parameters
+        param_dict = {pn: p for pn, p in self.named_parameters()}
+        # filter out those that do not require grad
+        param_dict = {pn: p for pn, p in param_dict.items() if p.requires_grad}
+        # create optim groups. Any parameters that is 2D will be weight decayed, otherwise no.
+        # i.e. all weight tensors in matmuls + embeddings decay, all biases and layernorms don't.
+        decay_params = [p for n, p in param_dict.items() if p.dim() >= 2]
+        nodecay_params = [p for n, p in param_dict.items() if p.dim() < 2]
+        optim_groups = [
+            {'params': decay_params, 'weight_decay': weight_decay},
+            {'params': nodecay_params, 'weight_decay': 0.0}
+        ]
+        num_decay_params = sum(p.numel() for p in decay_params)
+        num_nodecay_params = sum(p.numel() for p in nodecay_params)
+        print(f"num decayed parameter tensors: {len(decay_params)}, with {num_decay_params:,} parameters")
+        print(f"num non-decayed parameter tensors: {len(nodecay_params)}, with {num_nodecay_params:,} parameters")
+        # Create AdamW optimizer and use the fused version if it is available
+        fused_available = 'fused' in inspect.signature(torch.optim.AdamW).parameters
+        use_fused = fused_available and device_type == 'cuda'
+        extra_args = dict(fused=True) if use_fused else dict()
+        optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=betas, **extra_args)
+        print(f"using fused AdamW: {use_fused}")
+
+        return optimizer
 
 # Model parameters
 # vocab_size = 14
