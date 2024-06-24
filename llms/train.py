@@ -20,7 +20,7 @@ import math
 torch.set_float32_matmul_precision('high')
 
 # Initialize wandb
-use_wandb = False
+use_wandb = True
 
 # Model parameters
 tokenizer = Tokenizer()
@@ -32,14 +32,14 @@ n_layer = 6
 config = karpathy.GPTConfig(vocab_size=vocab_size, block_size=block_size, n_layer=n_layer, n_head=n_head, n_embd=n_embd)
 
 # Training parameters
-num_epochs = 1000
-batch_size = 1
+num_epochs = 50
+batch_size = 1024
 # steps = 990_000 / 2048 * 600 = ~293750
-lr_decay_iters = 100_000
+lr_decay_iters = 800_000
 num_workers = 20
 gradient_accumulation_steps = 4 # not used
-warmup_steps = 5
-learning_rate = 6e-4 # max learning rate
+warmup_steps = 1
+learning_rate =  0.001 # 6e-4 # max learning rate
 min_lr = 6e-5
 weight_decay = 1e-1
 beta1 = 0.9
@@ -48,7 +48,14 @@ beta2 = 0.95
 # Instantiate the model
 # model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer)
 model: karpathy.GPT = karpathy.GPT(config)
-model = torch.compile(model)
+weights = torch.load("llms/out/old/model_56000.pt")
+unwanted_prefix = '_orig_mod.'
+for k,v in list(weights.items()):
+    if k.startswith(unwanted_prefix):
+        weights[k[len(unwanted_prefix):]] = weights.pop(k)
+model.load_state_dict(weights)
+
+# model = torch.compile(model)
 # If multiple GPUs are available, wrap model with nn.DataParallel
 # if torch.cuda.device_count() > 1:
 #     print("Let's use", torch.cuda.device_count(), "GPUs!")
@@ -59,17 +66,16 @@ print(f"Number of parameters: {sum(p.numel() for p in model.parameters())}")
 # Define a lambda function for the warmup
 def lr_lambda(it: int):
     # 1) linear warmup for warmup_iters steps
-    return learning_rate
-    # if it < warmup_steps:
-    #     return learning_rate * it / warmup_steps
-    # # 2) if it > lr_decay_iters, return min learning rate
-    # if it > lr_decay_iters:
-    #     return min_lr
-    # # 3) in between, use cosine decay down to min learning rate
-    # decay_ratio = (it - warmup_steps) / (lr_decay_iters - warmup_steps)
-    # assert 0 <= decay_ratio <= 1
-    # coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio)) # coeff ranges 0..1
-    # return min_lr + coeff * (learning_rate - min_lr)
+    if it < warmup_steps:
+        return learning_rate * it / warmup_steps
+    # 2) if it > lr_decay_iters, return min learning rate
+    if it > lr_decay_iters:
+        return min_lr
+    # 3) in between, use cosine decay down to min learning rate
+    decay_ratio = (it - warmup_steps) / (lr_decay_iters - warmup_steps)
+    assert 0 <= decay_ratio <= 1
+    coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio)) # coeff ranges 0..1
+    return min_lr + coeff * (learning_rate - min_lr)
 
 # Define the loss function and optimizer
 loss_fn = nn.CrossEntropyLoss(reduction='none')
@@ -94,7 +100,6 @@ if ddp:
     device = f'cuda:{ddp_local_rank}'
     torch.cuda.set_device(device)
     model = model.to(device)
-    model = DDP(model, device_ids=[ddp_local_rank])
     master_process = ddp_rank == 0 # this process will do logging, checkpointing etc.
     seed_offset = ddp_rank # each process gets a different seed
     # world_size number of processes will be training simultaneously, so we can scale
@@ -116,6 +121,11 @@ else:
 optimizer = model.configure_optimizers(weight_decay, learning_rate, (beta1, beta2), 'cuda')
 scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
 
+raw_model = model
+if ddp:
+    model = DDP(model, device_ids=[ddp_local_rank])
+    raw_model = model.module
+
 if use_wandb and master_process:
     wandb.init(project='owt', name='small-gpt-maths-v2')
 # TODO list:
@@ -123,13 +133,23 @@ if use_wandb and master_process:
 # - add perplexity
 # - train and train.
 
+def evaluate_downstream(model, batch, device):
+    input, targets, mask = batch
+    input = input.to(device)
+    targets = targets.to(device)
+    mask = mask.to(device)
+    
+    with torch.no_grad():
+        output = model(input)
+    
 
 # Instantiate the scheduler
 scheduler = LambdaLR(optimizer, lr_lambda)
 
 # add tqdm for steps in epoch
-pbar = tqdm(total=num_epochs) #*len(train_dataloader))
+pbar = tqdm(total=num_epochs*len(train_dataloader))
 best_loss = 10
+first_debug_print = True
 # Training loop
 for epoch in range(num_epochs):
     for batch in train_dataloader:
@@ -137,15 +157,18 @@ for epoch in range(num_epochs):
         input_seq, target_seq, mask = batch
 
         # Debug prints here
-        numpy_input = input_seq.numpy()
-        print(tokenizer.decode(numpy_input[0]))
-        mask_input = mask.numpy()
-        for x in mask_input[0]:
-            print(x, end="")
-        print()
-        numpy_target = target_seq.numpy()
-        print(tokenizer.decode(numpy_target[0]))
-        print(input_seq.size())
+        # if first_debug_print:
+        #     numpy_input = input_seq.numpy()
+        #     print(tokenizer.decode(numpy_input[0]))
+        #     mask_input = mask.numpy()
+        #     for x in mask_input[0]:
+        #         print(x, end="")
+        #     print()
+        #     numpy_target = target_seq.numpy()
+        #     print(tokenizer.decode(numpy_target[0]))
+        #     print(input_seq.size())
+
+        #     first_debug_print = False
         # asdfasdf
 
         input_seq = input_seq.to(device)
@@ -168,43 +191,43 @@ for epoch in range(num_epochs):
         optimizer.step()
         scheduler.step()
 
-
-        if steps % 100 == 0 and master_process:
-            model.eval()
-            for val_batch in val_dataloader:
-                inputs, targets, mask = val_batch
-                inputs = inputs.to(device)
-                targets = targets.to(device)
-                mask = mask.to(device)
-                outputs = model(inputs)
-                loss_all = loss_fn(output.view(-1, vocab_size), target_seq.view(-1)) * mask.view(-1)
-                val_loss = loss_all.mean()
-                break # only do one batch for now
-            model.train()
-        # Log metrics to wandb
+        with torch.no_grad():
+            if steps % 500 == 0 and master_process:
+                model.eval()
+                perplexity_train = raw_model.get_perplexity(output, target_seq)
+                for val_batch in val_dataloader:
+                    inputs, targets, mask = val_batch
+                    inputs = inputs.to(device)
+                    targets = targets.to(device)
+                    mask = mask.to(device)
+                    outputs = model(inputs)
+                    loss_all = loss_fn(output.view(-1, vocab_size), targets.view(-1)) * mask.view(-1)
+                    val_loss = loss_all.mean()
+                    break # only do one batch for now
+                perplexity = raw_model.get_perplexity(output, targets)
+                model.train()
         debug_learning_rate = lr_lambda(steps)
         if use_wandb and master_process:
-            info = {"loss": loss.item(), "val_loss": val_loss.item(), "learning_rate": debug_learning_rate, "perplexity": model.get_perplexity(output, target_seq)}
+            info = {"loss": loss.item(), 
+                    "val_loss": val_loss.item(), 
+                    "learning_rate": debug_learning_rate, 
+                    "perplexity": perplexity,
+                    "perplexity_train": perplexity_train
+                }
             wandb.log(info)
-            print(info)
 
-        # Print loss every 100 steps
         steps += 1
-        if steps % 20 == 0 and master_process:
-            print(f'Step [{steps}], Loss: {loss.item()}, LR: {debug_learning_rate}')
-            # Keep track of best model
+        if steps % 100 == 0 and master_process:
+            print(f'Step [{steps}], Loss: {loss.item()}, Val_loss: {val_loss.item()}, LR: {debug_learning_rate}, Perplexity: {perplexity}, Perplexity_train: {perplexity_train}')
             if epoch == 0 or loss.item() < best_loss:
                 best_loss = loss.item()
                 torch.save(model.state_dict(), 'llms/out/best_model.pt')
 
-
-        if steps % 4000 == 0 and master_process:
+        if steps % 8000 == 0 and master_process:
             torch.save(model.state_dict(), f'llms/out/model_{steps}.pt')
 
-        # print the loss in the pbar
         pbar.set_description(f'Loss: {loss.item()}, LR: {debug_learning_rate}')
         pbar.update(1)
-        break
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item()}')
 
 

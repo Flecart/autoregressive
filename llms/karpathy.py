@@ -14,6 +14,10 @@ from dataclasses import dataclass
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+from .model import Abacus
+from .tokenizer import Tokenizer
+
+tokenizer = Tokenizer()
 
 class LayerNorm(nn.Module):
     """ LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False """
@@ -125,7 +129,7 @@ class GPT(nn.Module):
 
         self.transformer = nn.ModuleDict(dict(
             wte = nn.Embedding(config.vocab_size, config.n_embd),
-            wpe = nn.Embedding(config.block_size, config.n_embd),
+            wpe = Abacus(config.n_embd),  # nn.Embedding(config.block_size, config.n_embd),
             drop = nn.Dropout(config.dropout),
             h = nn.ModuleList([Block(config.n_embd, config.n_head, config.dropout, bias=config.bias) 
                 for _ in range(config.n_layer)]
@@ -177,8 +181,8 @@ class GPT(nn.Module):
         params are actually used as weights in the final layer, so we include them.
         """
         n_params = sum(p.numel() for p in self.parameters())
-        if non_embedding:
-            n_params -= self.transformer.wpe.weight.numel()
+        # if non_embedding:
+            # n_params -= self.transformer.wpe.weight.numel()
         return n_params
 
     def _init_weights(self, module):
@@ -193,11 +197,12 @@ class GPT(nn.Module):
         device = idx.device
         b, t = idx.size()
         assert t <= self.config.block_size, f"Cannot forward sequence of length {t}, block size is only {self.config.block_size}"
-        pos = torch.arange(0, t, dtype=torch.long, device=device) # shape (t)
+        # pos = torch.arange(0, t, dtype=torch.long, device=device) # shape (t)
 
         # forward the GPT model itself
         tok_emb = self.transformer.wte(idx) # token embeddings of shape (b, t, n_embd)
-        pos_emb = self.transformer.wpe(pos) # position embeddings of shape (t, n_embd)
+        # pos_emb = self.transformer.wpe(pos) # position embeddings of shape (t, n_embd)
+        pos_emb = self.transformer.wpe(idx)
         x = self.transformer.drop(tok_emb + pos_emb)
         for block in self.transformer.h:
             x = block(x, attention_mask=attention_mask)
@@ -247,6 +252,15 @@ class GPT(nn.Module):
 
         return optimizer
 
+    def print_probs(self, output):
+        # Prints probability vectors nicely
+        for j in range(output.size(1)):
+            print(f"{tokenizer._convert_id_to_token(j)}: {output[0, j]:.3f}", end=" ")
+        print()
+
+        output = torch.argmax(output, dim=-1)
+        return output
+
     @torch.no_grad()
     def generate(self, idx, max_new_tokens: int=20, temperature: float=1.0, top_k=None, stop=None):
         """
@@ -276,3 +290,65 @@ class GPT(nn.Module):
                 break
 
         return idx
+
+    # 
+    # @torch.no_grad()
+    # def generate(self, idx, max_new_tokens: int=20, temperature: float=1.0, top_k=None, stop=None):
+    #     """
+    #     Take a conditioning sequence of indices idx (LongTensor of shape (b,t)) and complete
+    #     the sequence max_new_tokens times, feeding the predictions back into the model each time.
+    #     Most likely you'll want to make sure to be in model.eval() mode of operation for this.
+    #     """
+    #     stop_flags = torch.zeros(idx.size(0), dtype=torch.bool, device=idx.device)
+    #     initial_lenght = idx.size(1)
+    #     # find the start of the padding token or the end of the sequence for correct generation
+    #     start_or_eos = torch.ones(idx.size(0), device=idx.device) * idx.size(1)
+        
+    #     # loop way
+    #     # for i in range(idx.size(0)):
+    #     #     # find the first padding token if any
+    #     #     indexes = (idx[i] == tokenizer.vocab[tokenizer.pad_token]).nonzero()
+    #     #     if indexes.size(0) > 0:
+    #     #         start_or_eos[i, indexes[0, 0]] = 0
+        
+    #     indexes = (idx == tokenizer.vocab[tokenizer.pad_token]).nonzero()
+    #     if indexes.size(0) > 0:
+    #         start_or_eos[indexes[:, 1]] = 0
+            
+    #     for _ in range(max_new_tokens):
+    #         # if the sequence context is growing too long we must crop it at block_size
+    #         idx_cond = idx if idx.size(1) <= self.config.block_size else idx[:, -self.config.block_size:]
+    #         # forward the model to get the logits for the index in the sequence
+    #         logits = self(idx_cond)
+    #         # pluck the logits at the final step and scale by desired temperature
+    #         logits = logits[:, start_or_eos, :] / temperature
+    #         # optionally crop the logits to only the top k options
+    #         self.print_probs(F.softmax(logits, dim=-1)) 
+    #         if top_k is not None:
+    #             v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
+    #             logits[logits < v[:, [-1]]] = -float('Inf')
+    #         probs = F.softmax(logits, dim=-1)
+    #         idx_next = torch.multinomial(probs, num_samples=1)
+    #         stop_flags = stop_flags | (idx_next.squeeze(-1) == stop)
+            
+    #         mask_lower_eos = start_or_eos.unsqueeze(-1) < idx.size(1)
+    #         idx_next = idx_next.masked_fill(stop_flags.unsqueeze(-1) | mask_lower_eos, tokenizer.vocab[tokenizer.pad_token])
+            
+    #         # The loop classical way            
+    #         for i in range(idx.size(0)):
+    #             if start_or_eos[i] != idx.size(1):
+    #                 idx[i, start_or_eos[i]] = idx_next[i]
+    #                 start_or_eos[i] += 1
+                    
+    #         if start_or_eos.all() == idx.size(1):
+    #         idx = torch.cat((idx, idx_next), dim=1)
+                    
+    #         mask = start_or_eos != idx.size(1)
+    #         idx = torch.where(mask.unsqueeze(-1), idx.scatter(1, start_or_eos.unsqueeze(-1), idx_next), idx)
+    #         start_or_eos = torch.where(mask, start_or_eos + 1, start_or_eos)
+    #         idx = torch.cat((idx, idx_next), dim=1)
+                    
+    #         if stop is not None and stop_flags.sum() == idx.size(0):
+    #             break
+
+    #     return idx

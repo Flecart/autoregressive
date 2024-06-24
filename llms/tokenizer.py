@@ -79,4 +79,4 @@ class Tokenizer(PreTrainedTokenizer):
     def decode(self, token_ids, **kwargs):
         # Convert token IDs to tokens and join into a string
         tokens = [self._convert_id_to_token(token_id) for token_id in token_ids]
-        return ''.join(tokens).replace(self.pad_token, 'X').replace(self.bos_token, '').replace(self.eos_token, '')
+        return ''.join(tokens).replace(self.pad_token, 'X').replace(self.bos_token, 'B').replace(self.eos_token, 'S')

@@ -19,7 +19,7 @@ config = karpathy.GPTConfig(vocab_size=vocab_size, block_size=block_size, n_laye
 model = karpathy.GPT(config)
 
 # inspect the state dict
-weights = torch.load("llms/out/best_model.pt")
+weights = torch.load("llms/out/old/model_56000.pt")
 unwanted_prefix = '_orig_mod.'
 for k,v in list(weights.items()):
     if k.startswith(unwanted_prefix):
@@ -33,25 +33,39 @@ model.load_state_dict(weights)
 # Set the model to evaluation mode
 model.eval()
 
+# Train
+# 
+
+# Test
+# 51190348+47347=98438348XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# 15+84945565=99945565XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# 206529+050878611=256308711XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# 206529+050878611=256308711XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# 908285621305640176+169701030186686092=077096651481337169XXXXXX
+# 9314+763623=605033XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 # Sample input text
-input_text = "7414487100717341052+2273996284028="
+input_text = "9314+763623=" # 077096651481337169XXXXXX
 
 # Convert input text to token IDs using the tokenizer
 # This step depends on the tokenizer you're using
 token_ids = tokenizer.encode(input_text)
 # add bos to beginning
 token_ids = [tokenizer.bos_token_id] + token_ids
+second_text = [tokenizer.bos_token_id] +[tokenizer.encode("206529+050878611=")]
 
 # Convert token IDs to PyTorch tensor and add batch dimension
-input_tensor = torch.tensor([token_ids], dtype=torch.long)
+input_tensor = torch.tensor([token_ids, second_text], dtype=torch.long)
 
 # Perform inference
 with torch.no_grad():
-    generated = model.generate(input_tensor)
+    generated = model.generate(input_tensor, max_new_tokens=50, top_k=1, stop=tokenizer.eos_token_id)
 
 
 print(generated, generated.size())
 # Convert predicted token IDs back to text
 predicted_text = tokenizer.decode(generated[0].tolist())
+predicted_text2 = tokenizer.decode(generated[1].tolist())
 
 print(predicted_text)
+print(predicted_text2)

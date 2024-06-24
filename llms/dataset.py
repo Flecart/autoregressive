@@ -100,7 +100,7 @@ class MathsDataset(Dataset):
         return self.__tokenizer.decode(input_seq[0].numpy())
 
 def exploration():
-    dataset = MathsDataset("train")
+    dataset = MathsDataset("val")
     for i in range(10):
         print(dataset.get_string(i))
 
