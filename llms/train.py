@@ -133,15 +133,53 @@ if use_wandb and master_process:
 # - add perplexity
 # - train and train.
 
-def evaluate_downstream(model, batch, device):
+def evaluate_downstream(model: karpathy.GPT, batch, device):
     input, targets, mask = batch
     input = input.to(device)
     targets = targets.to(device)
     mask = mask.to(device)
-    
+    input = input[:100] # only do 100 for now
+    equal_count = 0
     with torch.no_grad():
-        output = model(input)
+        for i, sample in enumerate(input):
+            # remove padding and result until the first padding
+            eq_index = (sample == tokenizer.encode("=")[0]).nonzero(as_tuple=True)[0]
+            sample_input = sample[:eq_index + 1]
+            size_difference = input.size(1) - sample_input.size(0)
+            generation = model.generate(torch.stack([sample_input]), max_new_tokens=size_difference, top_k=1, stop=tokenizer.eos_token_id)
+            # pad the generated sequence to match with input
+            generation_padded = torch.cat([generation, torch.zeros(1, input.size(1) - generation.size(1)).to(device)], dim=1)
+            # print(i)
+            # print(tokenizer.decode(sample.tolist()))
+            # print(tokenizer.decode(generation_padded[0].tolist()))
+            if torch.all(generation_padded == sample):
+                equal_count += 1
+                
+    return equal_count / len(input)
+
+def compute_loss(model, batch, device):
+    input_seq, target_seq, mask = batch
     
+    # Debug prints here
+    # if first_debug_print:
+    #     numpy_input = input_seq.numpy()
+    #     print(tokenizer.decode(numpy_input[0]))
+    #     mask_input = mask.numpy()
+    #     for x in mask_input[0]:
+    #         print(x, end="")
+    #     print()
+    #     numpy_target = target_seq.numpy()
+    #     print(tokenizer.decode(numpy_target[0]))
+    #     print(input_seq.size())
+
+    #     first_debug_print = False
+    # asdfasdf
+    input_seq = input_seq.to(device)
+    target_seq = target_seq.to(device)
+    mask = mask.to(device)
+    output = model(input_seq)
+    loss_all = loss_fn(output.view(-1, vocab_size), target_seq.view(-1)) * mask.view(-1)
+    return loss_all.mean(), output
 
 # Instantiate the scheduler
 scheduler = LambdaLR(optimizer, lr_lambda)
@@ -154,37 +192,8 @@ first_debug_print = True
 for epoch in range(num_epochs):
     for batch in train_dataloader:
         # Get input and target sequences from batch
-        input_seq, target_seq, mask = batch
-
-        # Debug prints here
-        # if first_debug_print:
-        #     numpy_input = input_seq.numpy()
-        #     print(tokenizer.decode(numpy_input[0]))
-        #     mask_input = mask.numpy()
-        #     for x in mask_input[0]:
-        #         print(x, end="")
-        #     print()
-        #     numpy_target = target_seq.numpy()
-        #     print(tokenizer.decode(numpy_target[0]))
-        #     print(input_seq.size())
-
-        #     first_debug_print = False
-        # asdfasdf
-
-        input_seq = input_seq.to(device)
-        target_seq = target_seq.to(device)
-        mask = mask.to(device)
-        # Forward pass
-        output = model(input_seq)
-
-        # clip gradient
+        loss, output = compute_loss(model, batch, device)
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-
-        # Compute loss
-        loss_all = loss_fn(output.view(-1, vocab_size), target_seq.view(-1)) * mask.view(-1)
-        # print(loss_all)
-        loss = loss_all.mean()
-
         # Backward pass and optimize
         optimizer.zero_grad()
         loss.backward()
@@ -194,35 +203,40 @@ for epoch in range(num_epochs):
         with torch.no_grad():
             if steps % 500 == 0 and master_process:
                 model.eval()
-                perplexity_train = raw_model.get_perplexity(output, target_seq)
+                _, target_seq, _ = batch
+                target_seq = target_seq.to(device)
+                train_perplexity = raw_model.get_perplexity(output, target_seq)
                 for val_batch in val_dataloader:
-                    inputs, targets, mask = val_batch
-                    inputs = inputs.to(device)
+                    _, targets, _ = val_batch
                     targets = targets.to(device)
-                    mask = mask.to(device)
-                    outputs = model(inputs)
-                    loss_all = loss_fn(output.view(-1, vocab_size), targets.view(-1)) * mask.view(-1)
-                    val_loss = loss_all.mean()
+                    val_loss, val_output = compute_loss(model, val_batch, device)
                     break # only do one batch for now
-                perplexity = raw_model.get_perplexity(output, targets)
+                val_perplexity = raw_model.get_perplexity(val_output, targets)
+                val_downstream_accuracy = evaluate_downstream(raw_model, val_batch, device)
+                train_downstream_accuracy = evaluate_downstream(raw_model, batch, device)
                 model.train()
+                
+                if val_loss.item() < best_loss:
+                    best_loss = val_loss.item()
+                    torch.save(model.state_dict(), 'llms/out/best_model.pt')
+
         debug_learning_rate = lr_lambda(steps)
         if use_wandb and master_process:
             info = {"loss": loss.item(), 
                     "val_loss": val_loss.item(), 
                     "learning_rate": debug_learning_rate, 
-                    "perplexity": perplexity,
-                    "perplexity_train": perplexity_train
+                    "val_perplexity": val_perplexity,
+                    "train_perplexity": train_perplexity,
+                    "val_downstream_accuracy": val_downstream_accuracy,
+                    "train_downstream_accuracy": train_downstream_accuracy,
                 }
             wandb.log(info)
 
         steps += 1
         if steps % 100 == 0 and master_process:
-            print(f'Step [{steps}], Loss: {loss.item()}, Val_loss: {val_loss.item()}, LR: {debug_learning_rate}, Perplexity: {perplexity}, Perplexity_train: {perplexity_train}')
-            if epoch == 0 or loss.item() < best_loss:
-                best_loss = loss.item()
-                torch.save(model.state_dict(), 'llms/out/best_model.pt')
-
+            # print(f'Step [{steps}], Loss: {loss.item()}, Val_loss: {val_loss.item()}, LR: {debug_learning_rate}, Perplexity: {perplexity}, Perplexity_train: {perplexity_train}')
+            print(info)
+            
         if steps % 8000 == 0 and master_process:
             torch.save(model.state_dict(), f'llms/out/model_{steps}.pt')
 
