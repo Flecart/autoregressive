@@ -39,6 +39,7 @@ class Abacus(torch.nn.Module):
         mask_shape = mask.shape
         
         # Create a shifted version of the mask to detect changes from 0 to 1
+        # print(f"mask_shape: {mask_shape}")
         shifted_mask = torch.cat([torch.zeros((mask_shape[0], 1), device=device, dtype=mask.dtype), mask[:, :-1]], dim=1)
         starts = (shifted_mask != mask) & mask
         

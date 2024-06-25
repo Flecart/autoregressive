@@ -22,4 +22,4 @@ training:
   beta2: 0.95
   use_wandb: False
   compile_model: False
-  out_dir: 'llms/out/semi-auto-1'
+  out_dir: 'llms/out/semi-auto'

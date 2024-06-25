@@ -8,7 +8,7 @@ from .models.model import SimpleDecoderTransformer
 from . import dataset as ds
 from time import time
 import os
-from .models import karpathy
+from .models import *
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 from torch.optim.lr_scheduler import LambdaLR
@@ -70,7 +70,11 @@ def lr_lambda(it: int, config: TrainingConfig):
 def setup_model(config: MainConfig):
     # Instantiate the model
     # model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer)
-    model: karpathy.GPT = karpathy.GPT(config.architecture)
+    match config.architecture.type:
+        case "normal":
+            model: karpathy.GPT = karpathy.GPT(config.architecture)
+        case "semi-auto":
+            model: sa_model.SAGPT = sa_model.SAGPT(config.architecture)
     # weights = torch.load("llms/out/old/model_56000.pt")
     # unwanted_prefix = '_orig_mod.'
     # for k,v in list(weights.items()):
@@ -140,8 +144,10 @@ def evaluate_downstream(model: karpathy.GPT, batch, device):
             eq_index = (sample == tokenizer.encode("=")[0]).nonzero(as_tuple=True)[0]
             sample_input = sample[:eq_index + 1]
             size_difference = input.size(1) - sample_input.size(0)
-            generation = model.generate(torch.stack([sample_input]), max_new_tokens=size_difference, top_k=1, stop=tokenizer.eos_token_id)
+            staked_input = torch.stack([sample_input])
+            generation = model.generate(staked_input, max_new_tokens=size_difference, top_k=1, stop=tokenizer.eos_token_id)
             # pad the generated sequence to match with input
+            # print(generation.size(), "sizeee")
             generation_padded = torch.cat([generation, torch.zeros(1, input.size(1) - generation.size(1)).to(device)], dim=1)
             # print(i)
             # print(tokenizer.decode(sample.tolist()))
@@ -303,8 +309,12 @@ def handle_config() -> MainConfig:
     parser.add_argument('--n_embd', type=int, help='Embedding size')
     parser.add_argument('--n_head', type=int, help='Number of heads')
     parser.add_argument('--n_layer', type=int, help='Number of layers')
+    parser.add_argument('--type', type=str, help='Model type')
+    parser.add_argument('--k_regressivity', type=int, help='K semi regressivity parameter regressivity')
     
     # training params
+    parser.add_argument('--use_wandb', type=bool, help='Use wandb')
+    parser.add_argument('--compile', type=bool, help='Compile model')
     parser.add_argument('--num_epochs', type=int, help='Number of epochs')
     parser.add_argument('--batch_size', type=int, help='Batch size')
     parser.add_argument('--lr_decay_iters', type=int, help='Learning rate decay iterations')

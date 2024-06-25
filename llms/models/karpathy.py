@@ -108,8 +108,8 @@ class Block(nn.Module):
         self.ln_2 = LayerNorm(n_embd, bias=bias)
         self.mlp = MLP(n_embd, bias=bias)
 
-    def forward(self, x, attention_mask=None):
-        x = x + self.attn(self.ln_1(x), attention_mask=attention_mask)
+    def forward(self, x):
+        x = x + self.attn(self.ln_1(x))
         x = x + self.mlp(self.ln_2(x))
         return x
 
@@ -249,7 +249,7 @@ class GPT(MetaGPT):
         b, t = idx.size()
         assert t <= self.config.block_size, f"Cannot forward sequence of length {t}, block size is only {self.config.block_size}"
         # pos = torch.arange(0, t, dtype=torch.long, device=device) # shape (t)
-
+        print(f"Size idx: {idx.size()}")
         # forward the GPT model itself
         tok_emb = self.transformer.wte(idx) # token embeddings of shape (b, t, n_embd)
         # pos_emb = self.transformer.wpe(pos) # position embeddings of shape (t, n_embd)
@@ -265,7 +265,7 @@ class GPT(MetaGPT):
             # logits = torch.stack([head_output[:, i::self.config.k_regressivity, :] for i in range(self.config.k_regressivity)]) # (k, b, t, vocab_size)
             # stacked_targets = torch.stack([targets[:, i:i+self.config.block_size][:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
             logits = self.lm_head(x) # (b, t, vocab_size)
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduce="none") * masks.view(-1)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction="none") * masks.view(-1)
             loss = loss.mean()
         else:
             # inference-time mini-optimization: only forward the lm_head on the very last position
