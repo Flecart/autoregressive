@@ -1,6 +1,5 @@
-import torch.distributed as dist
-import torch.nn as nn
-import torch.optim as optim
+import torch.nn.functional as F
+
 import wandb
 import torch
 from torch.nn.utils.rnn import pad_sequence
@@ -17,121 +16,140 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 from torch.optim.lr_scheduler import LambdaLR
 import math
+from pydantic import BaseModel
+from typing import Optional
+import yaml
 torch.set_float32_matmul_precision('high')
 
-# Initialize wandb
-use_wandb = True
-
-# Model parameters
+# ALL GLOBLS HERE
+ddp = None
+master_process = None
+raw_model = None
 tokenizer = Tokenizer()
-vocab_size = tokenizer.vocab_size
-block_size = 512
-n_embd = 128
-n_head = 8
-n_layer = 6
-config = karpathy.GPTConfig(vocab_size=vocab_size, block_size=block_size, n_layer=n_layer, n_head=n_head, n_embd=n_embd)
 
-# Training parameters
-num_epochs = 50
-batch_size = 1024
-# steps = 990_000 / 2048 * 600 = ~293750
-lr_decay_iters = 800_000
-num_workers = 20
-gradient_accumulation_steps = 4 # not used
-warmup_steps = 1
-learning_rate =  0.001 # 6e-4 # max learning rate
-min_lr = 6e-5
-weight_decay = 1e-1
-beta1 = 0.9
-beta2 = 0.95
+class TrainingConfig(BaseModel):
+    num_epochs: int
+    batch_size: int
+    lr_decay_iters: int
+    num_workers: int
+    gradient_accumulation_steps: Optional[int] = None  # Mark optional fields with default values
+    warmup_steps: int
+    learning_rate: float
+    min_lr: float
+    weight_decay: float
+    beta1: float
+    beta2: float
+    compile_model: bool = False
+    use_wandb: bool = False
+    
+class MainConfig(BaseModel):
+    architecture: karpathy.GPTConfig
+    training: TrainingConfig
 
-# Instantiate the model
-# model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer)
-model: karpathy.GPT = karpathy.GPT(config)
-weights = torch.load("llms/out/old/model_56000.pt")
-unwanted_prefix = '_orig_mod.'
-for k,v in list(weights.items()):
-    if k.startswith(unwanted_prefix):
-        weights[k[len(unwanted_prefix):]] = weights.pop(k)
-model.load_state_dict(weights)
 
-# model = torch.compile(model)
-# If multiple GPUs are available, wrap model with nn.DataParallel
-# if torch.cuda.device_count() > 1:
-#     print("Let's use", torch.cuda.device_count(), "GPUs!")
-#     model = nn.DataParallel(model, device_ids=[0, 1], output_device=0, dim=0)
-# Print number of parameters of th emodel
-print(f"Number of parameters: {sum(p.numel() for p in model.parameters())}")
+# Initialize wandb
+# use_wandb = True
+
+# # Model parameters
+# tokenizer = Tokenizer()
+# vocab_size = tokenizer.vocab_size
+# block_size = 512
+# n_embd = 128
+# n_head = 8
+# n_layer = 6
+# config = karpathy.GPTConfig(vocab_size=vocab_size, block_size=block_size, n_layer=n_layer, n_head=n_head, n_embd=n_embd)
+
+# # Training parameters
+# num_epochs = 50
+# batch_size = 1024
+# # steps = 990_000 / 2048 * 600 = ~293750
+# lr_decay_iters = 800_000
+# num_workers = 20
+# gradient_accumulation_steps = 4 # not used
+# warmup_steps = 5000
+# learning_rate =  0.001 # 6e-4 # max learning rate
+# min_lr = 6e-5
+# weight_decay = 1e-1
+# beta1 = 0.9
+# beta2 = 0.95
 
 # Define a lambda function for the warmup
-def lr_lambda(it: int):
+def lr_lambda(it: int, config: TrainingConfig):
     # 1) linear warmup for warmup_iters steps
-    if it < warmup_steps:
-        return learning_rate * it / warmup_steps
+    if it < config.warmup_steps:
+        return config.learning_rate * it / config.warmup_steps
     # 2) if it > lr_decay_iters, return min learning rate
-    if it > lr_decay_iters:
-        return min_lr
+    if it > config.lr_decay_iters:
+        return config.min_lr
     # 3) in between, use cosine decay down to min learning rate
-    decay_ratio = (it - warmup_steps) / (lr_decay_iters - warmup_steps)
+    decay_ratio = (it - config.warmup_steps) / (config.lr_decay_iters - config.warmup_steps)
     assert 0 <= decay_ratio <= 1
     coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio)) # coeff ranges 0..1
-    return min_lr + coeff * (learning_rate - min_lr)
+    return config.min_lr + coeff * (config.learning_rate - config.min_lr)
 
 # Define the loss function and optimizer
-loss_fn = nn.CrossEntropyLoss(reduction='none')
 
 # When creating the DataLoader, pass the collate_fn
-train_dataset = MathsDataset("train")
-train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=False)
-val_dataset = MathsDataset("val")
-val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=False)
 
-steps = 0
+def setup_model(config: MainConfig):
+    # Instantiate the model
+    # model = SimpleDecoderTransformer(vocab_size, block_size, n_embd, n_head, n_layer)
+    model: karpathy.GPT = karpathy.GPT(config.architecture)
+    # weights = torch.load("llms/out/old/model_56000.pt")
+    # unwanted_prefix = '_orig_mod.'
+    # for k,v in list(weights.items()):
+    #     if k.startswith(unwanted_prefix):
+    #         weights[k[len(unwanted_prefix):]] = weights.pop(k)
+    # model.load_state_dict(weights)
+    if config.training.compile_model:
+        model = torch.compile(model)
 
-# set up distributed training
-# various inits, derived attributes, I/O setup
-ddp = int(os.environ.get('RANK', -1)) != -1 # is this a ddp run?
-if ddp:
-    print("Running in DDP mode")
-    init_process_group(backend='nccl')
-    ddp_rank = int(os.environ['RANK'])
-    ddp_local_rank = int(os.environ['LOCAL_RANK'])
-    ddp_world_size = int(os.environ['WORLD_SIZE'])
-    device = f'cuda:{ddp_local_rank}'
-    torch.cuda.set_device(device)
-    model = model.to(device)
-    master_process = ddp_rank == 0 # this process will do logging, checkpointing etc.
-    seed_offset = ddp_rank # each process gets a different seed
-    # world_size number of processes will be training simultaneously, so we can scale
-    # down the desired gradient accumulation iterations per process proportionally
-    assert gradient_accumulation_steps % ddp_world_size == 0
-    gradient_accumulation_steps //= ddp_world_size
-else:
-    print("Running in single GPU/CPU mode")
-    # if not ddp, we are running on a single gpu, and one process
-    master_process = True
-    seed_offset = 0
-    ddp_world_size = 1
-
-    if torch.cuda.is_available():
-        device= 'cuda:0'
-        model: SimpleDecoderTransformer = model.to(device)
+    # set up distributed training
+    # various inits, derived attributes, I/O setup
+    global ddp
+    global master_process
+    global raw_model
+    ddp = int(os.environ.get('RANK', -1)) != -1 # is this a ddp run?
+    if ddp:
+        print("Running in DDP mode")
+        init_process_group(backend='nccl')
+        ddp_rank = int(os.environ['RANK'])
+        ddp_local_rank = int(os.environ['LOCAL_RANK'])
+        ddp_world_size = int(os.environ['WORLD_SIZE'])
+        device = f'cuda:{ddp_local_rank}'
+        torch.cuda.set_device(device)
+        model = model.to(device)
+        master_process = ddp_rank == 0 # this process will do logging, checkpointing etc.
+        # world_size number of processes will be training simultaneously, so we can scale
+        # down the desired gradient accumulation iterations per process proportionally
+        # Currently we don't use gradient
+        # assert gradient_accumulation_steps % ddp_world_size == 0
+        # gradient_accumulation_steps //= ddp_world_size
     else:
-        device = "cpu"
-optimizer = model.configure_optimizers(weight_decay, learning_rate, (beta1, beta2), 'cuda')
-scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
+        print("Running in single GPU/CPU mode")
+        # if not ddp, we are running on a single gpu, and one process
+        master_process = True
+        ddp_world_size = 1
 
-raw_model = model
-if ddp:
-    model = DDP(model, device_ids=[ddp_local_rank])
-    raw_model = model.module
+        if torch.cuda.is_available():
+            device= 'cuda:0'
+            model: SimpleDecoderTransformer = model.to(device)
+        else:
+            device = "cpu"
+    optimizer = model.configure_optimizers(
+        config.training.weight_decay, 
+        config.training.learning_rate, 
+        (config.training.beta1, config.training.beta2), 
+        device
+    )
 
-if use_wandb and master_process:
-    wandb.init(project='owt', name='small-gpt-maths-v2')
-# TODO list:
-# - make evaluation on val in the training loop (this is the downstream task)
-# - add perplexity
-# - train and train.
+    raw_model = model
+    if ddp:
+        model = DDP(model, device_ids=[ddp_local_rank])
+        raw_model = model.module
+        
+    return model, optimizer, device
+
 
 def evaluate_downstream(model: karpathy.GPT, batch, device):
     input, targets, mask = batch
@@ -174,80 +192,170 @@ def compute_loss(model, batch, device):
 
     #     first_debug_print = False
     # asdfasdf
+    
     input_seq = input_seq.to(device)
     target_seq = target_seq.to(device)
     mask = mask.to(device)
     output = model(input_seq)
-    loss_all = loss_fn(output.view(-1, vocab_size), target_seq.view(-1)) * mask.view(-1)
+    loss_all: torch.Tensor = F.cross_entropy(output.view(-1, output.size(-1)), target_seq.view(-1), reduction="none") * mask.view(-1)
     return loss_all.mean(), output
 
-# Instantiate the scheduler
-scheduler = LambdaLR(optimizer, lr_lambda)
+class EvaluationResults(BaseModel):
+    val_loss: float
+    val_perplexity: float
+    val_downstream_accuracy: float
 
-# add tqdm for steps in epoch
-pbar = tqdm(total=num_epochs*len(train_dataloader))
-best_loss = 10
-first_debug_print = True
-# Training loop
-for epoch in range(num_epochs):
-    for batch in train_dataloader:
-        # Get input and target sequences from batch
+def evaluate_model(model, dataloader, device) -> EvaluationResults:
+    model.eval()
+    total_loss = 0
+    total_perplexity = 0
+    total_downstream_accuracy = 0
+    total_samples = 0
+    for batch in dataloader:
         loss, output = compute_loss(model, batch, device)
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        # Backward pass and optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        scheduler.step()
+        _, targets, _ = batch
+        targets = targets.to(device)
+        perplexity = raw_model.get_perplexity(output, targets).item()
+        downstream_accuracy = evaluate_downstream(raw_model, batch, device)
+        total_loss += loss.item()
+        total_perplexity += perplexity
+        total_downstream_accuracy += downstream_accuracy
+        total_samples += 1
+        break
+    model.train()
+    return EvaluationResults(
+        val_loss=total_loss / total_samples, 
+        val_perplexity=total_perplexity / total_samples,
+        val_downstream_accuracy=total_downstream_accuracy / total_samples,
+    )
+    
+def train(config: MainConfig):
+    model, optimizer, device = setup_model(config)
+    lr_lambda_config = lambda it: lr_lambda(it, config.training)
+    scheduler = LambdaLR(optimizer, lr_lambda_config)
+    num_workers = 30
+    num_epochs = config.training.num_epochs
+    batch_size = config.training.batch_size
+    
+    train_dataset = MathsDataset("train")
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=False)
+    val_dataset = MathsDataset("val")
+    val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=False)
 
-        with torch.no_grad():
-            if steps % 500 == 0 and master_process:
-                model.eval()
-                _, target_seq, _ = batch
-                target_seq = target_seq.to(device)
-                train_perplexity = raw_model.get_perplexity(output, target_seq)
-                for val_batch in val_dataloader:
-                    _, targets, _ = val_batch
-                    targets = targets.to(device)
-                    val_loss, val_output = compute_loss(model, val_batch, device)
-                    break # only do one batch for now
-                val_perplexity = raw_model.get_perplexity(val_output, targets)
-                val_downstream_accuracy = evaluate_downstream(raw_model, val_batch, device)
-                train_downstream_accuracy = evaluate_downstream(raw_model, batch, device)
-                model.train()
-                
-                if val_loss.item() < best_loss:
-                    best_loss = val_loss.item()
-                    torch.save(model.state_dict(), 'llms/out/best_model.pt')
+    pbar = tqdm(total=num_epochs*len(train_dataloader))
+    best_loss = 10
+    steps = 0  # should save and get from saved model later.
 
-        debug_learning_rate = lr_lambda(steps)
-        if use_wandb and master_process:
+    for epoch in range(num_epochs):
+        for batch in train_dataloader:
+            # Get input and target sequences from batch
+            loss, _ = compute_loss(model, batch, device)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            # Backward pass and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            scheduler.step()
+
+            with torch.no_grad():
+                if steps % 500 == 0 and master_process:
+                    model.eval()
+                    _, target_seq, _ = batch
+                    target_seq = target_seq.to(device)
+                    train_downstream_accuracy = evaluate_downstream(raw_model, batch, device)
+                    model.train()
+                    
+                    evaluation_results = evaluate_model(model, val_dataloader, device)
+                    
+                    if evaluation_results.val_loss < best_loss:
+                        best_loss = evaluation_results.val_loss
+                        torch.save(model.state_dict(), 'llms/out/best_model.pt')
+
+            debug_learning_rate = lr_lambda_config(steps)
             info = {"loss": loss.item(), 
-                    "val_loss": val_loss.item(), 
-                    "learning_rate": debug_learning_rate, 
-                    "val_perplexity": val_perplexity,
-                    "train_perplexity": train_perplexity,
-                    "val_downstream_accuracy": val_downstream_accuracy,
-                    "train_downstream_accuracy": train_downstream_accuracy,
-                }
-            wandb.log(info)
+                "learning_rate": debug_learning_rate, 
+                "train_downstream_accuracy": train_downstream_accuracy,
+                **evaluation_results.model_dump()
+            }
 
-        steps += 1
-        if steps % 100 == 0 and master_process:
-            # print(f'Step [{steps}], Loss: {loss.item()}, Val_loss: {val_loss.item()}, LR: {debug_learning_rate}, Perplexity: {perplexity}, Perplexity_train: {perplexity_train}')
-            print(info)
-            
-        if steps % 8000 == 0 and master_process:
-            torch.save(model.state_dict(), f'llms/out/model_{steps}.pt')
+            if config.training.use_wandb and master_process:
+                wandb.log(info)
 
-        pbar.set_description(f'Loss: {loss.item()}, LR: {debug_learning_rate}')
-        pbar.update(1)
-    print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item()}')
+            steps += 1
+            if steps % 100 == 0 and master_process:
+                # print(f'Step [{steps}], Loss: {loss.item()}, Val_loss: {val_loss.item()}, LR: {debug_learning_rate}, Perplexity: {perplexity}, Perplexity_train: {perplexity_train}')
+                print(info)
+                
+            if steps % 8000 == 0 and master_process:
+                torch.save(model.state_dict(), f'llms/out/model_{steps}.pt')
+
+            pbar.set_description(f'Loss: {loss.item()}')
+            pbar.update(1)
+        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item()}')
 
 
-if use_wandb and master_process:
-    wandb.finish()
+    if config.training.use_wandb and master_process:
+        wandb.finish()
 
-if ddp:
-    destroy_process_group()
+    if ddp:
+        destroy_process_group()
 
+
+def parse_and_validate_config(config_path: str) -> MainConfig:
+    with open(config_path, 'r') as file:
+        config_data = yaml.safe_load(file)
+    return MainConfig(**config_data)
+
+def handle_config() -> MainConfig:
+    import argparse
+    parser = argparse.ArgumentParser(description='Train a model')
+    parser.add_argument('config', type=str, help='Path to the config file')
+    # add optional architecture params to override main config
+    parser.add_argument('--vocab_size', type=int, help='Vocab size')
+    parser.add_argument('--block_size', type=int, help='Block size')
+    parser.add_argument('--n_embd', type=int, help='Embedding size')
+    parser.add_argument('--n_head', type=int, help='Number of heads')
+    parser.add_argument('--n_layer', type=int, help='Number of layers')
+    
+    # training params
+    parser.add_argument('--num_epochs', type=int, help='Number of epochs')
+    parser.add_argument('--batch_size', type=int, help='Batch size')
+    parser.add_argument('--lr_decay_iters', type=int, help='Learning rate decay iterations')
+    parser.add_argument('--num_workers', type=int, help='Number of workers')
+    parser.add_argument('--gradient_accumulation_steps', type=int, help='Gradient accumulation steps')
+    parser.add_argument('--warmup_steps', type=int, help='Warmup steps')
+    parser.add_argument('--learning_rate', type=float, help='Learning rate')
+    parser.add_argument('--min_lr', type=float, help='Minimum learning rate')
+    parser.add_argument('--weight_decay', type=float, help='Weight decay')
+    parser.add_argument('--beta1', type=float, help='Beta1')
+    parser.add_argument('--beta2', type=float, help='Beta2')
+    
+    dict_vars = vars(parser.parse_args())
+    config_path = dict_vars.pop('config')
+    config = parse_and_validate_config(config_path)
+    
+    architecture_keys = karpathy.GPTConfig.model_fields
+    training_keys = TrainingConfig.model_fields
+    
+    config_dict = config.model_dump()
+    for key in dict_vars:
+        if dict_vars[key] is None:
+            continue
+        else:
+            print(f"Overriding {key} with {dict_vars[key]}")
+        if key in architecture_keys:
+            config_dict['architecture'][key] = dict_vars[key]
+        elif key in training_keys:
+            config_dict['training'][key] = dict_vars[key]
+    return MainConfig(**config_dict)
+
+def main():
+    config = handle_config()
+    print(f"Current configuration: {config}")
+    if config.training.use_wandb:
+        wandb.init(project='owt', config=config.model_dump())
+        
+    train(config)
+    
+if __name__ == "__main__":
+    main()

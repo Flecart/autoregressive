@@ -1,0 +1,21 @@
+
+architecture:
+  vocab_size: 19
+  block_size: 512
+  n_embd: 128
+  n_head: 8
+  n_layer: 6
+training:
+  num_epochs: 50
+  batch_size: 1024
+  lr_decay_iters: 800_000
+  num_workers: 20
+  gradient_accumulation_steps: 4
+  warmup_steps: 5000
+  learning_rate: 0.001
+  min_lr: 6e-5
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  use_wandb: False
+  compile_model: False
