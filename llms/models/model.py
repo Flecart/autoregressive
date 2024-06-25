@@ -1,8 +1,10 @@
+""" An old model that does not work! """
+
 import inspect
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from .tokenizer import Tokenizer
+from ..tokenizer import Tokenizer
 import random
 import math
 import torch.nn.functional as F
@@ -72,7 +74,6 @@ class Abacus(torch.nn.Module):
             output[output>0] += k # as we already have ones in the tensor, the tensor values will be k+1
 
         return self.embedding(output)
-
 
 class SimpleDecoderTransformer(nn.Module):
     def __init__(self, vocab_size, block_size, n_embd, n_head, n_layer):
@@ -156,8 +157,7 @@ class SimpleDecoderTransformer(nn.Module):
         
         return x
 
-
-    def configure_optimizers(self, weight_decay, learning_rate, betas, device_type):
+    def configure_optimizers(self, weight_decay: float, learning_rate: float, betas: tuple[float, float], device_type: str):
         # start with all of the candidate parameters
         param_dict = {pn: p for pn, p in self.named_parameters()}
         # filter out those that do not require grad

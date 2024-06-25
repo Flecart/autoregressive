@@ -49,15 +49,15 @@ class MathsDataset(Dataset):
         else:
             raise ValueError(f"Invalid split: {split}")
         self._split = split
-        self.__tokenizer = Tokenizer()
+        self.tokenizer = Tokenizer()
         # too slow to load the whole dataset
         self.data_source = np.memmap(filepath, dtype=np.uint16, mode='r')
         
-        # values = self.__tokenizer.decode(data)
+        # values = self.tokenizer.decode(data)
         # samples = values.split("\n")
         # # Now we can create the dataset
 
-        # self.data = [self.__tokenizer.encode(sample) for sample in samples]
+        # self.data = [self.tokenizer.encode(sample) for sample in samples]
         # self.masks = []
         # for sample in samples:
         #     # index of the string '=' in the sample
@@ -83,8 +83,8 @@ class MathsDataset(Dataset):
 
         for i, sample in enumerate(samples):
             # https://stackoverflow.com/questions/47863001/how-pytorch-tensor-get-the-index-of-specific-value
-            eos_token = self.__tokenizer.vocab[self.__tokenizer.eos_token]
-            equal_token = self.__tokenizer.vocab["="]
+            eos_token = self.tokenizer.vocab[self.tokenizer.eos_token]
+            equal_token = self.tokenizer.vocab["="]
             index_of_eot = (sample == eos_token).nonzero(as_tuple=True)[0]
             index_of_eq = (sample == equal_token).nonzero(as_tuple=True)[0]
             mask[i, :index_of_eq + 1] = 0
@@ -97,7 +97,29 @@ class MathsDataset(Dataset):
 
     def get_string(self, idx):
         input_seq, target_seq, mask = self.__getitems__([idx])
-        return self.__tokenizer.decode(input_seq[0].numpy())
+        return self.tokenizer.decode(input_seq[0].numpy())
+
+class SAMathsDataset(MathsDataset):
+    def __init__(self, split: str = None, k_regressivity: int = 2):
+        super().__init__(split)
+        assert k_regressivity > 0, "k_regressivity must be greater than 0"
+        self.k_regressivity = k_regressivity
+    
+    def __getitems__(self, idx: list[int]):
+        input_seq, target_seq, mask = super().__getitems__(idx)
+        
+        # pad the input sequence with the start token
+        start_token = self.tokenizer.vocab[self.tokenizer.bos_token]
+        offset_value = self.k_regressivity - 1
+        start_tokens = torch.full((len(idx), offset_value), start_token, dtype=torch.int64)
+        padding_tokens = torch.full((len(idx), offset_value), self.tokenizer.vocab[self.tokenizer.pad_token], dtype=torch.int64)
+        zeros = torch.zeros((len(idx), offset_value), dtype=torch.int64)
+
+        input_seq = torch.cat((start_tokens, input_seq), dim=1)
+        target_seq = torch.cat((target_seq, padding_tokens), dim=1)
+        mask = torch.cat((mask, zeros), dim=1)
+        
+        return input_seq, target_seq, mask
 
 def exploration():
     dataset = MathsDataset("val")

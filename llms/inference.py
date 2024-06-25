@@ -1,7 +1,7 @@
 import torch
-from .model import SimpleDecoderTransformer
+from .models.model import SimpleDecoderTransformer
 from .dataset import Tokenizer
-from . import karpathy
+from .models import karpathy
 
 # Assuming the tokenizer and the model's state_dict are already loaded
 tokenizer = Tokenizer()

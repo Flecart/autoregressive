@@ -1,51 +1,27 @@
-import torch.nn.functional as F
-
+from pydantic import BaseModel
 import wandb
 import torch
-from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from .model import SimpleDecoderTransformer
-from .dataset import MathsDataset
+from .models.model import SimpleDecoderTransformer
+from . import dataset as ds
 from time import time
 import os
-from .dataset import Tokenizer
-from . import karpathy
+from .models import karpathy
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
 from torch.optim.lr_scheduler import LambdaLR
 import math
-from pydantic import BaseModel
-from typing import Optional
 import yaml
+from .configs import MainConfig, TrainingConfig
 torch.set_float32_matmul_precision('high')
 
 # ALL GLOBLS HERE
 ddp = None
 master_process = None
 raw_model = None
-tokenizer = Tokenizer()
-
-class TrainingConfig(BaseModel):
-    num_epochs: int
-    batch_size: int
-    lr_decay_iters: int
-    num_workers: int
-    gradient_accumulation_steps: Optional[int] = None  # Mark optional fields with default values
-    warmup_steps: int
-    learning_rate: float
-    min_lr: float
-    weight_decay: float
-    beta1: float
-    beta2: float
-    compile_model: bool = False
-    use_wandb: bool = False
-    
-class MainConfig(BaseModel):
-    architecture: karpathy.GPTConfig
-    training: TrainingConfig
-
+tokenizer = ds.Tokenizer()
 
 # Initialize wandb
 # use_wandb = True
@@ -179,6 +155,7 @@ def compute_loss(model, batch, device):
     input_seq, target_seq, mask = batch
     
     # Debug prints here
+    # first_debug_print = True
     # if first_debug_print:
     #     numpy_input = input_seq.numpy()
     #     print(tokenizer.decode(numpy_input[0]))
@@ -196,9 +173,8 @@ def compute_loss(model, batch, device):
     input_seq = input_seq.to(device)
     target_seq = target_seq.to(device)
     mask = mask.to(device)
-    output = model(input_seq)
-    loss_all: torch.Tensor = F.cross_entropy(output.view(-1, output.size(-1)), target_seq.view(-1), reduction="none") * mask.view(-1)
-    return loss_all.mean(), output
+    output, loss = model(input_seq, (target_seq, mask))
+    return loss, output
 
 class EvaluationResults(BaseModel):
     val_loss: float
@@ -221,7 +197,7 @@ def evaluate_model(model, dataloader, device) -> EvaluationResults:
         total_perplexity += perplexity
         total_downstream_accuracy += downstream_accuracy
         total_samples += 1
-        break
+        break # only do one batch for now
     model.train()
     return EvaluationResults(
         val_loss=total_loss / total_samples, 
@@ -229,18 +205,26 @@ def evaluate_model(model, dataloader, device) -> EvaluationResults:
         val_downstream_accuracy=total_downstream_accuracy / total_samples,
     )
     
+def get_dataloader(config: MainConfig, split: str, shuffle: bool = True):
+    
+    match config.architecture.type:
+        case "normal":
+            dataset = ds.MathsDataset(split)
+            return DataLoader(dataset, batch_size=config.training.batch_size, shuffle=shuffle, num_workers=config.training.num_workers, pin_memory=False)
+        case "semi-auto":
+            dataset = ds.SAMathsDataset(split, config.architecture.k_regressivity)
+            return DataLoader(dataset, batch_size=config.training.batch_size, shuffle=shuffle, num_workers=config.training.num_workers, pin_memory=False)
+        case _:
+            raise ValueError("Invalid model type")
+
 def train(config: MainConfig):
     model, optimizer, device = setup_model(config)
     lr_lambda_config = lambda it: lr_lambda(it, config.training)
     scheduler = LambdaLR(optimizer, lr_lambda_config)
-    num_workers = 30
     num_epochs = config.training.num_epochs
-    batch_size = config.training.batch_size
     
-    train_dataset = MathsDataset("train")
-    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=False)
-    val_dataset = MathsDataset("val")
-    val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=False)
+    train_dataloader = get_dataloader(config, "train")
+    val_dataloader = get_dataloader(config, "val")
 
     pbar = tqdm(total=num_epochs*len(train_dataloader))
     best_loss = 10
@@ -248,6 +232,7 @@ def train(config: MainConfig):
 
     for epoch in range(num_epochs):
         for batch in train_dataloader:
+            _, target_seq, _ = batch
             # Get input and target sequences from batch
             loss, _ = compute_loss(model, batch, device)
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -269,10 +254,12 @@ def train(config: MainConfig):
                     
                     if evaluation_results.val_loss < best_loss:
                         best_loss = evaluation_results.val_loss
-                        torch.save(model.state_dict(), 'llms/out/best_model.pt')
+                        path = os.path.join(config.training.out_dir, 'best_model.pt')
+                        torch.save(model.state_dict(), path)
 
             debug_learning_rate = lr_lambda_config(steps)
-            info = {"loss": loss.item(), 
+            info = {
+                "loss": loss.item(), 
                 "learning_rate": debug_learning_rate, 
                 "train_downstream_accuracy": train_downstream_accuracy,
                 **evaluation_results.model_dump()
@@ -287,7 +274,8 @@ def train(config: MainConfig):
                 print(info)
                 
             if steps % 8000 == 0 and master_process:
-                torch.save(model.state_dict(), f'llms/out/model_{steps}.pt')
+                path = os.path.join(config.training.out_dir, f'model_{steps}.pt')
+                torch.save(model.state_dict(), path)
 
             pbar.set_description(f'Loss: {loss.item()}')
             pbar.update(1)
@@ -299,7 +287,6 @@ def train(config: MainConfig):
 
     if ddp:
         destroy_process_group()
-
 
 def parse_and_validate_config(config_path: str) -> MainConfig:
     with open(config_path, 'r') as file:
@@ -339,14 +326,12 @@ def handle_config() -> MainConfig:
     
     config_dict = config.model_dump()
     for key in dict_vars:
-        if dict_vars[key] is None:
-            continue
-        else:
+        if dict_vars[key] is not None:
             print(f"Overriding {key} with {dict_vars[key]}")
-        if key in architecture_keys:
-            config_dict['architecture'][key] = dict_vars[key]
-        elif key in training_keys:
-            config_dict['training'][key] = dict_vars[key]
+            if key in architecture_keys:
+                config_dict['architecture'][key] = dict_vars[key]
+            elif key in training_keys:
+                config_dict['training'][key] = dict_vars[key]
     return MainConfig(**config_dict)
 
 def main():
@@ -355,6 +340,8 @@ def main():
     if config.training.use_wandb:
         wandb.init(project='owt', config=config.model_dump())
         
+    os.makedirs(config.training.out_dir, exist_ok=True)    
+    
     train(config)
     
 if __name__ == "__main__":

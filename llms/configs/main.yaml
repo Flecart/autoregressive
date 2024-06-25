@@ -5,12 +5,15 @@ architecture:
   n_embd: 128
   n_head: 8
   n_layer: 6
+  type: 'semi-auto'
+  k_regressivity: 2 # used only for semi-auto
 training:
+  # 50 epoch and 1024 batch size -> 966800 steps
   num_epochs: 50
   batch_size: 1024
   lr_decay_iters: 800_000
   num_workers: 20
-  gradient_accumulation_steps: 4
+  gradient_accumulation_steps: 4 # not used
   warmup_steps: 5000
   learning_rate: 0.001
   min_lr: 6e-5
@@ -19,3 +22,4 @@ training:
   beta2: 0.95
   use_wandb: False
   compile_model: False
+  out_dir: 'llms/out/semi-auto-1'

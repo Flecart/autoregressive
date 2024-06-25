@@ -7,6 +7,7 @@ https://github.com/openai/gpt-2/blob/master/src/model.py
 https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/modeling_gpt2.py
 """
 
+from abc import abstractmethod
 import math
 import inspect
 from dataclasses import dataclass
@@ -15,7 +16,8 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 from .model import Abacus
-from .tokenizer import Tokenizer
+from ..tokenizer import Tokenizer
+from ..configs import GPTConfig
 from pydantic import BaseModel
 
 tokenizer = Tokenizer()
@@ -111,49 +113,17 @@ class Block(nn.Module):
         x = x + self.mlp(self.ln_2(x))
         return x
 
-class GPTConfig(BaseModel):
-    block_size: int = 1024
-    vocab_size: int = 50304 # GPT-2 vocab_size of 50257, padded up to nearest multiple of 64 for efficiency
-    n_layer: int = 12
-    n_head: int = 12
-    n_embd: int = 768
-    dropout: float = 0.0
-    bias: bool = True # True: bias in Linears and LayerNorms, like GPT-2. False: a bit better and faster
-
-class GPT(nn.Module):
+class MetaGPT(nn.Module):
     def __init__(self, config: GPTConfig):
         super().__init__()
-        assert config.vocab_size is not None
-        assert config.block_size is not None
         self.config = config
-
-        self.transformer = nn.ModuleDict(dict(
-            wte = nn.Embedding(config.vocab_size, config.n_embd),
-            wpe = Abacus(config.n_embd),  # nn.Embedding(config.block_size, config.n_embd),
-            drop = nn.Dropout(config.dropout),
-            h = nn.ModuleList([Block(config.n_embd, config.n_head, config.dropout, bias=config.bias) 
-                for _ in range(config.n_layer)]
-            ),
-            ln_f = LayerNorm(config.n_embd, bias=config.bias),
-        ))
-
-        print("Number of parameters of a single transformer block:", sum(p.numel() for p in self.transformer.h[0].parameters()))
-        print("Number of wte parameters:", sum(p.numel() for p in self.transformer.wte.parameters()))
-        print("Number of wpe parameters:", sum(p.numel() for p in self.transformer.wpe.parameters()), config.vocab_size, config.n_embd)
-
-        self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
-        # with weight tying when using torch.compile() some warnings get generated:
-        # "UserWarning: functional_call was passed multiple values for tied weights.
-        # This behavior is deprecated and will be an error in future versions"
-        # not 100% sure what this is, so far seems to be harmless. TODO investigate
-        self.transformer.wte.weight = self.lm_head.weight # https://paperswithcode.com/method/weight-tying
-
-        # init all weights
+    
+    def init_weights(self):    
         self.apply(self._init_weights)
         # apply special scaled init to the residual projections, per GPT-2 paper
         for pn, p in self.named_parameters():
             if pn.endswith('c_proj.weight'):
-                torch.nn.init.normal_(p, mean=0.0, std=0.02/math.sqrt(2 * config.n_layer))
+                torch.nn.init.normal_(p, mean=0.0, std=0.02/math.sqrt(2 * self.config.n_layer))
 
         # report number of parameters
         print("number of parameters: %.2fM" % (self.get_num_params()/1e6,))
@@ -193,23 +163,6 @@ class GPT(nn.Module):
         elif isinstance(module, nn.Embedding):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
-    def forward(self, idx, attention_mask=None):
-        device = idx.device
-        b, t = idx.size()
-        assert t <= self.config.block_size, f"Cannot forward sequence of length {t}, block size is only {self.config.block_size}"
-        # pos = torch.arange(0, t, dtype=torch.long, device=device) # shape (t)
-
-        # forward the GPT model itself
-        tok_emb = self.transformer.wte(idx) # token embeddings of shape (b, t, n_embd)
-        # pos_emb = self.transformer.wpe(pos) # position embeddings of shape (t, n_embd)
-        pos_emb = self.transformer.wpe(idx)
-        x = self.transformer.drop(tok_emb + pos_emb)
-        for block in self.transformer.h:
-            x = block(x, attention_mask=attention_mask)
-        x = self.transformer.ln_f(x)
-
-        logits = self.lm_head(x) # note: using list [-1] to preserve the time dim
-        return logits
 
     def estimate_mfu(self, fwdbwd_per_iter, dt):
         # first estimate the number of flops we do per iteration.
@@ -260,6 +213,67 @@ class GPT(nn.Module):
 
         output = torch.argmax(output, dim=-1)
         return output
+    
+    @abstractmethod
+    def forward(self, *args, **kwargs):
+        pass
+    
+    @abstractmethod
+    def generate(self, *args, **kwargs):
+        pass
+
+class GPT(MetaGPT):
+    def __init__(self, config: GPTConfig):
+        super().__init__(config)
+        assert config.vocab_size is not None
+        assert config.block_size is not None
+        self.transformer = nn.ModuleDict(dict(
+            wte = nn.Embedding(config.vocab_size, config.n_embd),
+            wpe = Abacus(config.n_embd),  # nn.Embedding(config.block_size, config.n_embd),
+            drop = nn.Dropout(config.dropout),
+            h = nn.ModuleList([Block(config.n_embd, config.n_head, config.dropout, bias=config.bias) 
+                for _ in range(config.n_layer)]
+            ),
+            ln_f = LayerNorm(config.n_embd, bias=config.bias),
+        ))
+
+        print("Number of parameters of a single transformer block:", sum(p.numel() for p in self.transformer.h[0].parameters()))
+        print("Number of wte parameters:", sum(p.numel() for p in self.transformer.wte.parameters()))
+        print("Number of wpe parameters:", sum(p.numel() for p in self.transformer.wpe.parameters()), config.vocab_size, config.n_embd)
+
+        self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
+        self.transformer.wte.weight = self.lm_head.weight # https://paperswithcode.com/method/weight-tying
+
+    def forward(self, idx, targets=None, attention_mask=None):
+        device = idx.device
+        b, t = idx.size()
+        assert t <= self.config.block_size, f"Cannot forward sequence of length {t}, block size is only {self.config.block_size}"
+        # pos = torch.arange(0, t, dtype=torch.long, device=device) # shape (t)
+
+        # forward the GPT model itself
+        tok_emb = self.transformer.wte(idx) # token embeddings of shape (b, t, n_embd)
+        # pos_emb = self.transformer.wpe(pos) # position embeddings of shape (t, n_embd)
+        pos_emb = self.transformer.wpe(idx)
+        x = self.transformer.drop(tok_emb + pos_emb)
+        for block in self.transformer.h:
+            x = block(x, attention_mask=attention_mask)
+        x = self.transformer.ln_f(x)
+
+        if targets is not None:
+            targets, masks = targets
+            
+            # logits = torch.stack([head_output[:, i::self.config.k_regressivity, :] for i in range(self.config.k_regressivity)]) # (k, b, t, vocab_size)
+            # stacked_targets = torch.stack([targets[:, i:i+self.config.block_size][:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
+            logits = self.lm_head(x) # (b, t, vocab_size)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduce="none") * masks.view(-1)
+            loss = loss.mean()
+        else:
+            # inference-time mini-optimization: only forward the lm_head on the very last position
+            # logits = torch.stack([lm_head(x[:, [-1], :]) for lm_head in self.lm_heads]) # note: using list [-1] to preserve the time dim
+            logits = self.lm_head(x[:, -self.config.k_regressivity:, :])
+            loss = None
+
+        return logits, loss
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens: int=20, temperature: float=1.0, top_k=None, stop=None):
@@ -273,7 +287,7 @@ class GPT(nn.Module):
             # if the sequence context is growing too long we must crop it at block_size
             idx_cond = idx if idx.size(1) <= self.config.block_size else idx[:, -self.config.block_size:]
             # forward the model to get the logits for the index in the sequence
-            logits = self(idx_cond)
+            logits, _ = self(idx_cond)
             # pluck the logits at the final step and scale by desired temperature
             
             logits = logits[:, -1, :] / temperature
