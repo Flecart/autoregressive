@@ -10,7 +10,7 @@ class SACausalSelfAttention(karpathy.CausalSelfAttention):
         super().__init__(n_embd=config.n_embd, n_head=config.n_head, dropout=config.dropout, bias=config.bias)
         self.k_regressivity = config.k_regressivity
 
-    def forward(self, x: torch.Tensor):  
+    def forward(self, x: torch.Tensor):
         B, T, C = x.size() # batch size, sequence length, embedding dimensionality (n_embd)
 
         # calculate query, key, values for all heads in batch and move head forward to be the batch dim
@@ -124,7 +124,6 @@ class SAGPT(karpathy.MetaGPT):
             Targets: Shape: (batch_size, sequence_length)
         
         """
-        print("thiss")
         final_size = (targets.size(1) + self.config.k_regressivity - 1) // self.config.k_regressivity
         
         targets_to_stack = []
@@ -136,17 +135,20 @@ class SAGPT(karpathy.MetaGPT):
             targets_to_stack.append(curr_target)
             
         stacked_targets = torch.stack(targets_to_stack) # (k, b, t)
-        logit_predictions = F.log_softmax(logits, dim=-1)
-        one_hot_targets = F.one_hot(stacked_targets, num_classes=self.config.vocab_size).float()
-        perplexity = torch.exp(-torch.sum(logit_predictions * one_hot_targets, dim=-1).mean())
+        
+        print(f"aaaaaaaaaaaa", stacked_targets)
+        loss        = F.cross_entropy(logits.view(-1, logits.size(-1)), stacked_targets.view(-1), reduction="mean")
+        print(f"bbbbbbbbbbbb", loss)
+        perplexity  = torch.exp(loss)
+        
+        # logit_predictions = F.log_softmax(logits, dim=-1)
+        # one_hot_targets = F.one_hot(stacked_targets, num_classes=self.config.vocab_size).float()
+        # perplexity = torch.exp(-torch.sum(logit_predictions * one_hot_targets, dim=-1).mean())
         return perplexity
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens: int, temperature=1.0, top_k=None, stop=None):
         """
-        Take a conditioning sequence of indices idx (LongTensor of shape (b,t)) and complete
-        the sequence max_new_tokens times, feeding the predictions back into the model each time.
-        Most likely you'll want to make sure to be in model.eval() mode of operation for this.
         """
         stopped = False
         tokens = 0

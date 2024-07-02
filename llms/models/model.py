@@ -111,9 +111,8 @@ class SimpleDecoderTransformer(nn.Module):
             Targets: Shape: (batch_size, sequence_length)
         
         """
-        logit_predictions = F.log_softmax(logits, dim=-1)
-        one_hot_targets = F.one_hot(targets, num_classes=self.config.vocab_size).float()
-        perplexity = torch.exp(-torch.sum(logit_predictions * one_hot_targets, dim=-1).mean())
+        loss        = F.cross_entropy(logits, targets)
+        perplexity  = torch.exp(loss)
         return perplexity
 
     def forward(self, x):
