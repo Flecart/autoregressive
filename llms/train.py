@@ -75,6 +75,8 @@ def setup_model(config: MainConfig):
             model: karpathy.GPT = karpathy.GPT(config.architecture)
         case "semi-auto":
             model: sa_model.SAGPT = sa_model.SAGPT(config.architecture)
+        case "frequent": # same arch
+            model: karpathy.GPT = karpathy.GPT(config.architecture)
     # weights = torch.load("llms/out/old/model_56000.pt")
     # unwanted_prefix = '_orig_mod.'
     # for k,v in list(weights.items()):
@@ -129,7 +131,6 @@ def setup_model(config: MainConfig):
         raw_model = model.module
         
     return model, optimizer, device
-
 
 def evaluate_downstream(model: karpathy.GPT, batch, device):
     input, targets, mask = batch
@@ -197,31 +198,30 @@ def evaluate_model(model, dataloader, device) -> EvaluationResults:
         loss, output = compute_loss(model, batch, device)
         _, targets, _ = batch
         targets = targets.to(device)
-        perplexity = raw_model.get_perplexity(output, targets).item()
+        perplexity = raw_model.get_perplexity(output, targets)
         downstream_accuracy = evaluate_downstream(raw_model, batch, device)
-        total_loss += loss.item()
+        total_loss += loss
         total_perplexity += perplexity
         total_downstream_accuracy += downstream_accuracy
         total_samples += 1
-        break # only do one batch for now
     model.train()
     return EvaluationResults(
-        val_loss=total_loss / total_samples, 
+        val_loss=total_loss / total_samples,
         val_perplexity=total_perplexity / total_samples,
         val_downstream_accuracy=total_downstream_accuracy / total_samples,
     )
     
 def get_dataloader(config: MainConfig, split: str, shuffle: bool = True):
-    
     match config.architecture.type:
         case "normal":
             dataset = ds.MathsDataset(split)
-            return DataLoader(dataset, batch_size=config.training.batch_size, shuffle=shuffle, num_workers=config.training.num_workers, pin_memory=False)
         case "semi-auto":
             dataset = ds.SAMathsDataset(split, config.architecture.k_regressivity)
-            return DataLoader(dataset, batch_size=config.training.batch_size, shuffle=shuffle, num_workers=config.training.num_workers, pin_memory=False)
+        case "frequent":
+            dataset = ds.FreqMathsDataset(split, config.architecture.blanks)
         case _:
             raise ValueError("Invalid model type")
+    return DataLoader(dataset, batch_size=config.training.batch_size, shuffle=shuffle, num_workers=config.training.num_workers, pin_memory=False)
 
 def train(config: MainConfig):
     model, optimizer, device = setup_model(config)
@@ -230,7 +230,7 @@ def train(config: MainConfig):
     num_epochs = config.training.num_epochs
     
     train_dataloader = get_dataloader(config, "train")
-    val_dataloader = get_dataloader(config, "val")
+    val_dataloader = get_dataloader(config, "val", shuffle=False)
 
     pbar = tqdm(total=num_epochs*len(train_dataloader))
     best_loss = 10
@@ -254,9 +254,8 @@ def train(config: MainConfig):
                     _, target_seq, _ = batch
                     target_seq = target_seq.to(device)
                     train_downstream_accuracy = evaluate_downstream(raw_model, batch, device)
-                    model.train()
-                    
                     evaluation_results = evaluate_model(model, val_dataloader, device)
+                    model.train()
                     
                     if evaluation_results.val_loss < best_loss:
                         best_loss = evaluation_results.val_loss
@@ -311,10 +310,12 @@ def handle_config() -> MainConfig:
     parser.add_argument('--n_layer', type=int, help='Number of layers')
     parser.add_argument('--type', type=str, help='Model type')
     parser.add_argument('--k_regressivity', type=int, help='K semi regressivity parameter regressivity')
+    parser.add_argument('--blanks', type=int, help='Number of blanks for frequent supervision')
     
     # training params
-    parser.add_argument('--use_wandb', type=bool, help='Use wandb')
-    parser.add_argument('--compile', type=bool, help='Compile model')
+    parser.add_argument('--use_wandb', action=argparse.BooleanOptionalAction, help='Use wandb')
+    parser.add_argument('--compile', action=argparse.BooleanOptionalAction, help='Compile model')
+    parser.add_argument('--out_dir', type=str, help='Output directory')
     parser.add_argument('--num_epochs', type=int, help='Number of epochs')
     parser.add_argument('--batch_size', type=int, help='Batch size')
     parser.add_argument('--lr_decay_iters', type=int, help='Learning rate decay iterations')

@@ -120,6 +120,32 @@ class SAMathsDataset(MathsDataset):
         mask = torch.cat((mask, zeros), dim=1)
         
         return input_seq, target_seq, mask
+    
+class FreqMathsDataset(MathsDataset):
+    def __init__(self, split: str = None, blanks: float = 2):
+        super().__init__(split)
+        assert blanks > 0, "blanks must be greater than 0"
+        self.blanks = blanks
+
+    def __getitems__(self, idx: list[int]):
+        input_seq, target_seq, mask = super().__getitems__(idx)
+
+        for i, _ in enumerate(idx):
+            np.random.seed(idx[i])
+            curr_mask = mask[i]
+
+            ones = np.where(curr_mask == 1)[0]
+            first_one = ones[0]
+            last_one = ones[-1]
+
+            range_len = last_one - first_one + 1 - 1 # no meaning if I don't let at least one up!
+
+            random_choice = np.random.choice(range(first_one, last_one + 1), min(range_len, self.blanks), replace=False)
+            mask[i][random_choice] = 0
+
+        return input_seq, target_seq, mask
+
+
 
 def exploration():
     dataset = MathsDataset("val")

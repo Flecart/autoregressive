@@ -12,5 +12,6 @@
 # torchrun --standalone --nproc_per_node=4 train.py config/train_gpt2_maths.py "$@"
 # torchrun --standalone --nproc_per_node=4 -m llms.train
 
-CUDA_VISIBLE_DEVICES=1 python3 -m llms.train llms/configs/main.yaml
 # CUDA_VISIBLE_DEVICES=1 python3 -m llms.train llms/configs/main.yaml
+# CUDA_VISIBLE_DEVICES=1 python3 -m llms.train llms/configs/main.yaml
+CUDA_VISIBLE_DEVICES=1 python3 -m llms.train llms/configs/main.yaml --k_regressivity=2 --use_wandb --compile --out_dir="llms/out/sa-2"

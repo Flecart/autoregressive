@@ -256,7 +256,7 @@ class GPT(MetaGPT):
         pos_emb = self.transformer.wpe(idx)
         x = self.transformer.drop(tok_emb + pos_emb)
         for block in self.transformer.h:
-            x = block(x, attention_mask=attention_mask)
+            x = block(x)
         x = self.transformer.ln_f(x)
 
         if targets is not None:
@@ -309,7 +309,7 @@ class GPT(MetaGPT):
 
     # 
     # @torch.no_grad()
-    # def generate(self, idx, max_new_tokens: int=20, temperature: float=1.0, top_k=None, stop=None):
+    # def ____generate(self, idx, max_new_tokens: int=20, temperature: float=1.0, top_k=None, stop=None):
     #     """
     #     Take a conditioning sequence of indices idx (LongTensor of shape (b,t)) and complete
     #     the sequence max_new_tokens times, feeding the predictions back into the model each time.
