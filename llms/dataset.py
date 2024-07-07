@@ -39,6 +39,7 @@ num_proc_load_dataset = num_proc
 number_of_operations = 20_000_000
 max_number_size = int(1e20) # 20 characters
 test_split_size = 0.01
+max_val_set = 2048
 
 class MathsDataset(Dataset):
     def __init__(self, split: str = None):
@@ -70,8 +71,7 @@ class MathsDataset(Dataset):
         if self._split == "train":
             return (number_of_operations // 100) * int(100 - test_split_size * 100)
         elif self._split == "val":
-            return (number_of_operations // 100) * int(test_split_size * 100)
-        # return len(self.data)
+            return min((number_of_operations // 100) * int(test_split_size * 100), max_val_set) # faster check in this way
 
     def __getitems__(self, idx: list[int]):
         """ idx: list of indices to retrieve from the dataset
@@ -122,30 +122,43 @@ class SAMathsDataset(MathsDataset):
         return input_seq, target_seq, mask
     
 class FreqMathsDataset(MathsDataset):
-    def __init__(self, split: str = None, blanks: float = 2):
+    def __init__(self, split: str = None, blanks: float = 0.1, seed: int = 42):
         super().__init__(split)
         assert blanks > 0, "blanks must be greater than 0"
         self.blanks = blanks
+        self.seed = seed
 
     def __getitems__(self, idx: list[int]):
         input_seq, target_seq, mask = super().__getitems__(idx)
 
         for i, _ in enumerate(idx):
-            np.random.seed(idx[i])
+            # ASK SAMU FOR THIS LINE
+            np.random.seed(abs(hash((idx[i], self.seed)) % 2**32))
+
             curr_mask = mask[i]
+            window_size = curr_mask.shape[0]
 
             ones = np.where(curr_mask == 1)[0]
             first_one = ones[0]
             last_one = ones[-1]
+            range_len = last_one - first_one + 1
+            
+            random_choice = (np.random.rand(range_len) > self.blanks).astype(np.int64)
+            
+            # so that the training sample is not completely blanked
+            if random_choice.sum() == 0:
+                random_choice[np.random.randint(range_len)] = 1
+            
+            blanked_states = np.zeros(window_size)
+            blanked_states[first_one:last_one + 1] = random_choice
+            mask[i] *= blanked_states
 
-            range_len = last_one - first_one + 1 - 1 # no meaning if I don't let at least one up!
-
-            random_choice = np.random.choice(range(first_one, last_one + 1), min(range_len, self.blanks), replace=False)
-            mask[i][random_choice] = 0
+            # num_to_blank = int(range_len * self.blanks)
+            # min(range_len, self.blanks)
+            # random_choice = np.random.choice(range(first_one, last_one + 1), num_to_blank, replace=False)
+            # mask[i][random_choice] = 0
 
         return input_seq, target_seq, mask
-
-
 
 def exploration():
     dataset = MathsDataset("val")

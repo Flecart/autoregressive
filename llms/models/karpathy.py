@@ -244,12 +244,11 @@ class GPT(MetaGPT):
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
         self.transformer.wte.weight = self.lm_head.weight # https://paperswithcode.com/method/weight-tying
 
-    def forward(self, idx, targets=None, attention_mask=None):
+    def forward(self, idx, targets=None):
         device = idx.device
         b, t = idx.size()
         assert t <= self.config.block_size, f"Cannot forward sequence of length {t}, block size is only {self.config.block_size}"
         # pos = torch.arange(0, t, dtype=torch.long, device=device) # shape (t)
-        print(f"Size idx: {idx.size()}")
         # forward the GPT model itself
         tok_emb = self.transformer.wte(idx) # token embeddings of shape (b, t, n_embd)
         # pos_emb = self.transformer.wpe(pos) # position embeddings of shape (t, n_embd)
@@ -261,12 +260,14 @@ class GPT(MetaGPT):
 
         if targets is not None:
             targets, masks = targets
-            
             # logits = torch.stack([head_output[:, i::self.config.k_regressivity, :] for i in range(self.config.k_regressivity)]) # (k, b, t, vocab_size)
             # stacked_targets = torch.stack([targets[:, i:i+self.config.block_size][:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
             logits = self.lm_head(x) # (b, t, vocab_size)
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction="none") * masks.view(-1)
-            loss = loss.mean()
+            
+            # print(logits.size(), targets.size(), masks.size())
+            loss: torch.Tensor = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction="none")
+            loss = (loss.view(b, t) * masks).sum(dim=-1) / masks.sum(dim=-1) # media singolo case, con peso corretto data dalla mask.
+            loss = loss.mean()  # media lungo il batch
         else:
             # inference-time mini-optimization: only forward the lm_head on the very last position
             # logits = torch.stack([lm_head(x[:, [-1], :]) for lm_head in self.lm_heads]) # note: using list [-1] to preserve the time dim
@@ -307,13 +308,11 @@ class GPT(MetaGPT):
 
         return idx
 
-    # 
     # @torch.no_grad()
     # def ____generate(self, idx, max_new_tokens: int=20, temperature: float=1.0, top_k=None, stop=None):
     #     """
     #     Take a conditioning sequence of indices idx (LongTensor of shape (b,t)) and complete
     #     the sequence max_new_tokens times, feeding the predictions back into the model each time.
-    #     Most likely you'll want to make sure to be in model.eval() mode of operation for this.
     #     """
     #     stop_flags = torch.zeros(idx.size(0), dtype=torch.bool, device=idx.device)
     #     initial_lenght = idx.size(1)

@@ -105,8 +105,9 @@ class SAGPT(karpathy.MetaGPT):
             stacked_targets = torch.stack(targets_to_stack) # torch.stack([targets[:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
             stacked_masks = torch.stack(masks_to_stack) # torch.stack([masks[:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
             # logits = self.lm_head(x) # (b, t, vocab_size)
-            loss: torch.Tensor = F.cross_entropy(logits.view(-1, logits.size(-1)), stacked_targets.view(-1), reduction="none") * stacked_masks.view(-1)
-            loss = loss.mean()
+            loss: torch.Tensor = F.cross_entropy(logits.view(-1, logits.size(-1)), stacked_targets.view(-1), reduction="none")
+            loss = (loss.view(b, t) * stacked_masks).sum(dim=-1) / stacked_masks.sum(dim=-1) # media singolo case, con peso corretto data dalla mask.
+            loss = loss.mean()  # media lungo il batch
         else:
             # inference-time mini-optimization: only forward the lm_head on the very last position
             logits = torch.stack([lm_head(x[:, [-1], :]) for lm_head in self.lm_heads]) # note: using list [-1] to preserve the time dim

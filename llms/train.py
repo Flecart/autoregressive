@@ -160,7 +160,7 @@ def evaluate_downstream(model: karpathy.GPT, batch, device):
 
 def compute_loss(model, batch, device):
     input_seq, target_seq, mask = batch
-    
+
     # Debug prints here
     # first_debug_print = True
     # if first_debug_print:
@@ -176,7 +176,7 @@ def compute_loss(model, batch, device):
 
     #     first_debug_print = False
     # asdfasdf
-    
+
     input_seq = input_seq.to(device)
     target_seq = target_seq.to(device)
     mask = mask.to(device)
@@ -191,23 +191,27 @@ class EvaluationResults(BaseModel):
 def evaluate_model(model, dataloader, device) -> EvaluationResults:
     model.eval()
     total_loss = 0
-    total_perplexity = 0
+    #total_perplexity = 0
     total_downstream_accuracy = 0
     total_samples = 0
     for batch in dataloader:
-        loss, output = compute_loss(model, batch, device)
+        loss, _ = compute_loss(model, batch, device)
         _, targets, _ = batch
         targets = targets.to(device)
-        perplexity = raw_model.get_perplexity(output, targets)
+        #perplexity = torch.exp(loss) # raw_model.get_perplexity(output, targets)
         downstream_accuracy = evaluate_downstream(raw_model, batch, device)
-        total_loss += loss
-        total_perplexity += perplexity
+        total_loss += loss * len(batch) # Since loss is averaged
+        #total_perplexity += perplexity
         total_downstream_accuracy += downstream_accuracy
         total_samples += 1
     model.train()
+
+    mean_val_loss = total_loss / total_samples
+    perplexity = torch.exp(mean_val_loss)
+
     return EvaluationResults(
-        val_loss=total_loss / total_samples,
-        val_perplexity=total_perplexity / total_samples,
+        val_loss=mean_val_loss,
+        val_perplexity=perplexity,
         val_downstream_accuracy=total_downstream_accuracy / total_samples,
     )
     
@@ -218,12 +222,14 @@ def get_dataloader(config: MainConfig, split: str, shuffle: bool = True):
         case "semi-auto":
             dataset = ds.SAMathsDataset(split, config.architecture.k_regressivity)
         case "frequent":
-            dataset = ds.FreqMathsDataset(split, config.architecture.blanks)
+            dataset = ds.FreqMathsDataset(split, config.architecture.blanks, config.training.seed)
         case _:
             raise ValueError("Invalid model type")
-    return DataLoader(dataset, batch_size=config.training.batch_size, shuffle=shuffle, num_workers=config.training.num_workers, pin_memory=False)
+
+    return DataLoader(dataset, batch_size=config.training.batch_size, shuffle=shuffle, num_workers=1, pin_memory=False) # 
 
 def train(config: MainConfig):
+    torch.random.manual_seed(config.training.seed)
     model, optimizer, device = setup_model(config)
     lr_lambda_config = lambda it: lr_lambda(it, config.training)
     scheduler = LambdaLR(optimizer, lr_lambda_config)
@@ -310,7 +316,7 @@ def handle_config() -> MainConfig:
     parser.add_argument('--n_layer', type=int, help='Number of layers')
     parser.add_argument('--type', type=str, help='Model type')
     parser.add_argument('--k_regressivity', type=int, help='K semi regressivity parameter regressivity')
-    parser.add_argument('--blanks', type=int, help='Number of blanks for frequent supervision')
+    parser.add_argument('--blanks', type=float, help='Number of blanks for frequent supervision')
     
     # training params
     parser.add_argument('--use_wandb', action=argparse.BooleanOptionalAction, help='Use wandb')

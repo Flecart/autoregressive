@@ -16,6 +16,7 @@ class TrainingConfig(BaseModel):
     out_dir: str
     compile_model: bool = False
     use_wandb: bool = False
+    seed: int = 42
     
 class GPTConfig(BaseModel):
     block_size: int = 1024
@@ -31,7 +32,7 @@ class GPTConfig(BaseModel):
     k_regressivity: int = 2
     
     # For frequent supervision
-    blanks: int = 1
+    blanks: float = 1
 
 class MainConfig(BaseModel):
     architecture: GPTConfig
