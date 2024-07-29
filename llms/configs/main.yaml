@@ -7,6 +7,9 @@ architecture:
   n_layer: 6
   type: 'frequent'
   k_regressivity: 2 # used only for semi-auto
+
+  n_masks_complete: 3 # used only for complete
+
 training:
   # ephochs * (990000 / 1024) batch size -> 966800 steps
   num_epochs: 30

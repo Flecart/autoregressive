@@ -137,9 +137,9 @@ class SAGPT(karpathy.MetaGPT):
             
         stacked_targets = torch.stack(targets_to_stack) # (k, b, t)
         
-        print(f"aaaaaaaaaaaa", stacked_targets)
+        # print(f"aaaaaaaaaaaa", stacked_targets)
         loss        = F.cross_entropy(logits.view(-1, logits.size(-1)), stacked_targets.view(-1), reduction="mean")
-        print(f"bbbbbbbbbbbb", loss)
+        # print(f"bbbbbbbbbbbb", loss)
         perplexity  = torch.exp(loss)
         
         # logit_predictions = F.log_softmax(logits, dim=-1)

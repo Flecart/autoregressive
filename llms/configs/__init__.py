@@ -26,13 +26,16 @@ class GPTConfig(BaseModel):
     n_embd: int = 768
     dropout: float = 0.0
     bias: bool = True # True: bias in Linears and LayerNorms, like GPT-2. False: a bit better and faster
-    type: Literal["normal", "semi-auto", "frequent"] = "normal"
+    type: Literal["normal", "semi-auto", "frequent", "complete", "immediate"] = "normal"
     
     # Used for semi-autoregressive models
     k_regressivity: int = 2
     
     # For frequent supervision
     blanks: float = 1
+    
+    # for complete supervision
+    n_masks_complete: int = 3
 
 class MainConfig(BaseModel):
     architecture: GPTConfig

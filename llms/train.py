@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from .models.model import SimpleDecoderTransformer
+from . import models
 from . import dataset as ds
 from time import time
 import os
@@ -77,6 +78,8 @@ def setup_model(config: MainConfig):
             model: sa_model.SAGPT = sa_model.SAGPT(config.architecture)
         case "frequent": # same arch
             model: karpathy.GPT = karpathy.GPT(config.architecture)
+        case "complete":
+            model: models.CompleteGPT = models.CompleteGPT(config.architecture)
     # weights = torch.load("llms/out/old/model_56000.pt")
     # unwanted_prefix = '_orig_mod.'
     # for k,v in list(weights.items()):
@@ -223,6 +226,8 @@ def get_dataloader(config: MainConfig, split: str, shuffle: bool = True):
             dataset = ds.SAMathsDataset(split, config.architecture.k_regressivity)
         case "frequent":
             dataset = ds.FreqMathsDataset(split, config.architecture.blanks, config.training.seed)
+        case "complete":
+            dataset = ds.MathsDataset(split)
         case _:
             raise ValueError("Invalid model type")
 
@@ -317,6 +322,7 @@ def handle_config() -> MainConfig:
     parser.add_argument('--type', type=str, help='Model type')
     parser.add_argument('--k_regressivity', type=int, help='K semi regressivity parameter regressivity')
     parser.add_argument('--blanks', type=float, help='Number of blanks for frequent supervision')
+    parser.add_argument('--n_masks_complete', type=int, help='Number of classes to blank for complete supervision')
     
     # training params
     parser.add_argument('--use_wandb', action=argparse.BooleanOptionalAction, help='Use wandb')
