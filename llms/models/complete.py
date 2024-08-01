@@ -28,18 +28,20 @@ class CompleteGPT(GPT):
             # stacked_targets = torch.stack([targets[:, i:i+self.config.block_size][:, i::self.config.k_regressivity] for i in range(self.config.k_regressivity)], ) # (k, b, t)
             logits: torch.Tensor = self.lm_head(x) # (b, t, vocab_size)
             
-            one_hot_masks = torch.zeros(b, t, self.config.vocab_size, device=logits.device, dtype=torch.bool)
             
-            # for each b,t sample without reimmission n_masks_complete times, sample a mask
-            uniform_ones = torch.ones(b, t, self.config.vocab_size, device=logits.device)
-            target_one_hot = torch.nn.functional.one_hot(targets, logits.size(-1))
-            uniform_ones -= target_one_hot # so that we don't deactivate the target.
-            masks_complete = torch.multinomial(uniform_ones.view(-1, uniform_ones.size(-1)), self.n_masks_complete).view(b, t, self.n_masks_complete)
-            
-            for i in range(self.n_masks_complete):
-                one_hot_masks |= torch.nn.functional.one_hot(masks_complete[:, :, i], logits.size(-1)).bool()
-            # set every sampled vocab size to -infty
-            logits = logits.masked_fill(one_hot_masks == 1, -float('inf'))
+            if self.n_masks_complete > 0:
+                one_hot_masks = torch.zeros(b, t, self.config.vocab_size, device=logits.device, dtype=torch.bool)
+                
+                # for each b,t sample without reimmission n_masks_complete times, sample a mask
+                uniform_ones = torch.ones(b, t, self.config.vocab_size, device=logits.device)
+                target_one_hot = torch.nn.functional.one_hot(targets, logits.size(-1))
+                uniform_ones -= target_one_hot # so that we don't deactivate the target.
+                masks_complete = torch.multinomial(uniform_ones.view(-1, uniform_ones.size(-1)), self.n_masks_complete).view(b, t, self.n_masks_complete)
+                
+                for i in range(self.n_masks_complete):
+                    one_hot_masks |= torch.nn.functional.one_hot(masks_complete[:, :, i], logits.size(-1)).bool()
+                # set every sampled vocab size to -infty
+                logits = logits.masked_fill(one_hot_masks == 1, -float('inf'))
             
             loss: torch.Tensor = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction="none")
             loss = (loss.view(b, t) * masks).sum(dim=-1) / masks.sum(dim=-1) # media singolo case, con peso corretto data dalla mask.

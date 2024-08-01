@@ -12,7 +12,7 @@ architecture:
 
 training:
   # ephochs * (990000 / 1024) batch size -> 966800 steps
-  num_epochs: 30
+  num_epochs: 300
   batch_size: 1024
   lr_decay_iters: 800_000
   num_workers: 20
